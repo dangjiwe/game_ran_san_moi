@@ -2,3 +2,4 @@
 
 chạy giao diện
 chạy đồ họa
+cập nhật
