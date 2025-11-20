@@ -10,6 +10,7 @@ class Snake:
         self.body = [Vector2(6, 9), Vector2(5, 9), Vector2(4, 9)]
         # Hướng đi ban đầu: sang phải
         self.direction = Vector2(1, 0)
+        self.new_block = False # Biến cờ: True nếu rắn vừa ăn mồi (và cần dài thêm)
 
     def draw(self):
         # 1. Vẽ Thân Rắn (trừ đầu)
@@ -54,3 +55,39 @@ class Snake:
         
         # Trả về bề mặt đầu rắn đã xoay
         return pygame.transform.rotate(snake_head_surface, angle)
+        
+    # --- BỔ SUNG: CHỨC NĂNG DI CHUYỂN ---
+    def move_snake(self):
+        # 1. Sao chép thân rắn hiện tại
+        if self.new_block:
+            # Nếu ăn mồi (new_block=True), giữ nguyên đuôi, chỉ thêm đầu mới
+            body_copy = self.body[:] 
+            self.new_block = False # Đặt lại cờ sau khi thêm khối
+        else:
+            # Nếu không ăn mồi, xóa phần đuôi (body[:-1])
+            body_copy = self.body[:-1]
+        
+        # 2. Tính toán vị trí đầu mới
+        new_head = body_copy[0] + self.direction
+        
+        # 3. Thêm đầu mới vào vị trí đầu danh sách
+        body_copy.insert(0, new_head)
+        
+        # 4. Cập nhật thân rắn
+        self.body = body_copy
+        
+    def add_block(self):
+        # Được gọi khi rắn ăn mồi
+        self.new_block = True
+        
+    # --- BỔ SUNG: CHỨC NĂNG TỰ CẮN THÂN ---
+    def check_self_bite(self):
+        # Kiểm tra xem đầu rắn (self.body[0]) có trùng với bất kỳ đoạn thân nào (self.body[1:]) không
+        return self.body[0] in self.body[1:]
+        
+    # --- BỔ SUNG: CHỨC NĂNG RESET ---
+    def reset(self):
+        # Đặt lại vị trí ban đầu và hướng
+        self.body = [Vector2(6, 9), Vector2(5, 9), Vector2(4, 9)]
+        self.direction = Vector2(1, 0)
+        self.new_block = False

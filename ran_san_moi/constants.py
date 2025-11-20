@@ -1,7 +1,7 @@
 # constants.py
 
 import pygame
-import os # Đã được import
+import os 
 from pygame.math import Vector2
 
 # --- BỔ SUNG KHẮC PHỤC LỖI PATH ---
@@ -33,6 +33,17 @@ screen_height = 2 * OFFSET + cell_size * number_of_cells
 pygame.init()
 screen = pygame.display.set_mode((screen_width, screen_height)) 
 pygame.display.set_caption("Ran_San_Moi")
+
+# Định nghĩa Event cho chuyển động
+SCREEN_UPDATE = pygame.USEREVENT
+
+# --- BỔ SUNG FONT CHỮ ---
+# Khởi tạo font để hiển thị Game Over
+try:
+    font = pygame.font.Font(None, 40) # Font mặc định của Pygame, cỡ 40
+except:
+    font = pygame.font.SysFont('Arial', 40)
+# -------------------------
 
 # Tải và Xử lý bề mặt (Surface)
 try:
