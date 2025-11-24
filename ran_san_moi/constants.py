@@ -48,7 +48,6 @@ except:
 # Tải và Xử lý bề mặt (Surface)
 try:
     # Bề mặt Thức ăn
-    # SỬ DỤNG os.path.join VÀ BASE_DIR ĐỂ TẠO ĐƯỜNG DẪN TUYỆT ĐỐI
     food_path = os.path.join(BASE_DIR, "food.png")
     food_surface = pygame.image.load(food_path)
     food_surface = pygame.transform.scale(food_surface, (cell_size, cell_size)) 
@@ -59,7 +58,6 @@ except pygame.error:
     
 try:
     # Bề mặt Đầu Rắn
-    # SỬ DỤNG os.path.join VÀ BASE_DIR ĐỂ TẠO ĐƯỜNG DẪN TUYỆT ĐỐI
     head_path = os.path.join(BASE_DIR, "dauran.png")
     snake_head_surface = pygame.image.load(head_path).convert_alpha()
     snake_head_surface = pygame.transform.scale(snake_head_surface, (HEAD_SIZE, HEAD_SIZE))
