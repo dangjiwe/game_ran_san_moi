@@ -22,15 +22,18 @@ number_of_cells = 20
 OFFSET = 75
 
 # Cấu hình Đầu Rắn
-HEAD_SCALE_FACTOR = 2.5
+HEAD_SCALE_FACTOR = 1.4
 HEAD_SIZE = int(cell_size * HEAD_SCALE_FACTOR)
 
 # Kích thước Màn hình
 screen_width = 2 * OFFSET + cell_size * number_of_cells
 screen_height = 2 * OFFSET + cell_size * number_of_cells
 
-# Khởi tạo Pygame và Cửa sổ
+# --- KHẮC PHỤC LỖI #1: Đảm bảo Pygame được init trước set_timer (trong main.py) ---
 pygame.init()
+# ----------------------------------------------------------------------------------
+
+# Khởi tạo Cửa sổ
 screen = pygame.display.set_mode((screen_width, screen_height)) 
 pygame.display.set_caption("Ran_San_Moi")
 

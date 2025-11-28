@@ -16,7 +16,6 @@ class Snake:
 
     def draw(self):
         # 1. Vẽ Thân Rắn (trừ đầu)
-        # Sửa Bug 6: Đã sửa để màu xen kẽ đúng
         for index, segment in enumerate(self.body[1:]): 
             segment_rect = (OFFSET + segment.x * cell_size, 
                             OFFSET + segment.y * cell_size, 
@@ -33,18 +32,20 @@ class Snake:
         # 2. Vẽ Đầu Rắn
         head_segment = self.body[0]
         
+        # --- KHẮC PHỤC LỖI #2: Căn chỉnh đầu rắn lớn hơn cell_size ---
         offset_adjust = (HEAD_SIZE - cell_size) // 2 
         
         head_rect = pygame.Rect(OFFSET + head_segment.x * cell_size - offset_adjust, 
                                  OFFSET + head_segment.y * cell_size - offset_adjust, 
                                  HEAD_SIZE, HEAD_SIZE)
+        # -------------------------------------------------------------
         
         # Xoay và vẽ hình ảnh đầu rắn
         rotated_head = self.rotate_head_image()
         screen.blit(rotated_head, head_rect)
 
     def rotate_head_image(self):
-        # Sửa Bug 2: Sửa lại góc xoay cho đúng chuẩn: Lên=0, Trái=90, Xuống=180, Phải=270
+        # Sửa lại góc xoay cho đúng chuẩn: Lên=0, Trái=90, Xuống=180, Phải=270
         angle = 0
         if self.direction == Vector2(1, 0):    # Phải
             angle = 270
@@ -58,8 +59,9 @@ class Snake:
         return pygame.transform.rotate(snake_head_surface, angle)
         
     def move_snake(self):
-        # Sửa Bug 4: Cập nhật hướng di chuyển chính bằng hướng chờ
+        # --- KHẮC PHỤC LỖI #4: Cập nhật hướng di chuyển chính bằng hướng chờ ---
         self.direction = self.next_direction 
+        # ---------------------------------------------------------------------
         
         if self.new_block:
             body_copy = self.body[:] 

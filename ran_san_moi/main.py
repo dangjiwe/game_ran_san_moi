@@ -2,11 +2,13 @@
 
 import pygame
 import sys
+# Import constants sớm để pygame.init() được gọi (Khắc phục lỗi #1)
+from constants import SCREEN_UPDATE 
 from game import Game
-from constants import SCREEN_UPDATE
 from pygame.math import Vector2 
 
 # Thiết lập tốc độ di chuyển
+# Không cần gọi pygame.init() ở đây vì đã gọi trong constants.py
 pygame.time.set_timer(SCREEN_UPDATE, 150)
 
 # Khởi tạo đối tượng Game
@@ -31,6 +33,7 @@ while True:
             if game.game_running:
                 current_direction = game.snake.direction 
                 
+                # Kiểm tra hướng ngược để ngăn đổi hướng 180 độ (Bug #4)
                 if event.key == pygame.K_UP and current_direction.y != 1: 
                     game.snake.next_direction = Vector2(0, -1)
                 elif event.key == pygame.K_DOWN and current_direction.y != -1: 
@@ -40,9 +43,8 @@ while True:
                 elif event.key == pygame.K_RIGHT and current_direction.x != -1: 
                     game.snake.next_direction = Vector2(1, 0)
             
-            # Reset Game khi Game Over (nhấn SPACE)
+            # Reset Game khi Game Over (nhấn SPACE) (Bug #3)
             elif event.key == pygame.K_SPACE and not game.game_running: 
-                # Sửa Bug 5: Dùng hàm reset tổng thể
                 game.reset_game()
                 
     # Vẽ tất cả các thành phần trò chơi
