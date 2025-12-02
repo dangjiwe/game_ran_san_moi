@@ -2,23 +2,22 @@
 
 from snake import Snake
 from food import Food
-# IMPORT ĐẦY ĐỦ (BAO GỒM eat_sound)
-from constants import screen, GRASS_LIGHT, GRASS_DARK, BORDER_COLOR, DARK_GREEN, cell_size, number_of_cells, OFFSET, font, screen_width, screen_height, PROJECT_ROOT, BLACK, bg_surface, eat_sound
+# Import HighScoreManager mới
+from highscore import HighScoreManager 
+# Import đầy đủ các biến cần thiết từ constants
+from constants import screen, GRASS_LIGHT, GRASS_DARK, BORDER_COLOR, DARK_GREEN, cell_size, number_of_cells, OFFSET, font, screen_width, screen_height, BLACK, bg_surface, eat_sound
 import pygame
-import sys 
-import json 
-import os 
 
 class Game:
     def __init__(self):
         self.snake = Snake()
         self.food = Food(self.snake.body)
         self.game_running = True 
-
-        self.save_dir = os.path.join(PROJECT_ROOT, "save") 
-        self.save_file_path = os.path.join(self.save_dir, "high_score.json") 
-        self.high_score = 0
-        self.load_high_score()
+        
+        # --- SỬ DỤNG QUẢN LÝ ĐIỂM (CODE MỚI) ---
+        self.hs_manager = HighScoreManager()
+        self.high_score = self.hs_manager.load()
+        # ---------------------------------------
         
         self.pause_button_rect = None 
         self.back_button_rect = None
@@ -27,25 +26,7 @@ class Game:
         self.countdown_value = 3
         self.last_countdown_time = 0
 
-    def load_high_score(self):
-        if os.path.exists(self.save_file_path):
-            try:
-                with open(self.save_file_path, 'r') as f:
-                    data = json.load(f)
-                self.high_score = data.get('high_score', 0)
-            except: self.high_score = 0
-        else: self.high_score = 0
-
-    def save_high_score(self):
-        current_score = len(self.snake.body) - 3
-        if current_score >= self.high_score:
-            self.high_score = current_score
-            if not os.path.exists(self.save_dir):
-                os.makedirs(self.save_dir)
-            try:
-                with open(self.save_file_path, 'w') as f:
-                    json.dump({'high_score': self.high_score}, f, indent=4)
-            except: pass
+    # (ĐÃ XÓA hàm load_high_score và save_high_score cũ ở đây vì không cần nữa)
 
     def start_countdown(self):
         self.countdown_active = True
@@ -83,10 +64,8 @@ class Game:
         if self.game_running or is_paused:
             grid_bottom = OFFSET + (cell_size * number_of_cells)
             btn_y = grid_bottom + 15
-            
             pause_txt = "TẠM DỪNG" if not is_paused else "TIẾP TỤC"
             self.pause_button_rect = self.draw_button(pause_txt, OFFSET, btn_y)
-            
             back_x = OFFSET + self.pause_button_rect.width + 20
             self.back_button_rect = self.draw_button("QUAY LẠI", back_x, btn_y)
 
@@ -104,11 +83,9 @@ class Game:
             self.draw_countdown()
 
     def draw_grass(self):
-        # Ưu tiên vẽ background từ ảnh (nếu có load được)
         if bg_surface:
              screen.blit(bg_surface, (0, 0))
         else:
-            # Nếu không có ảnh, vẽ bàn cờ caro
             screen.fill(BORDER_COLOR)
             for row in range(number_of_cells):
                 for col in range(number_of_cells):
@@ -139,7 +116,7 @@ class Game:
         score = len(self.snake.body) - 3
         s_surf = font.render(f"ĐIỂM: {score}", True, DARK_GREEN)
         screen.blit(s_surf, (screen_width - OFFSET - s_surf.get_width(), OFFSET - 50))
-        h_surf = font.render(f"CAO NHẤT: {self.high_score}", True, DARK_GREEN)
+        h_surf = font.render(f"ĐIỂM CAO NHẤT: {self.high_score}", True, DARK_GREEN)
         screen.blit(h_surf, (OFFSET, OFFSET - 50))
              
     def draw_game_over(self):
@@ -153,14 +130,8 @@ class Game:
         if self.food.position == self.snake.body[0]:
             self.food.position = self.food.generate_random_pos(self.snake.body)
             self.snake.add_block()
-            
-            # --- PHÁT ÂM THANH VÀ DEBUG ---
             if eat_sound:
                 eat_sound.play()
-                # print("----> Đã ăn!") 
-            else:
-                print("----> Lỗi: Không tìm thấy âm thanh ăn!")
-            # ------------------------------
 
     def check_wall_collision(self):
         head = self.snake.body[0]
@@ -171,13 +142,23 @@ class Game:
         if self.snake.body[0] in self.snake.body[1:]:
             self.game_over()
 
+    # --- SỬA LOGIC GAME OVER ---
     def game_over(self):
-        self.save_high_score() 
+        # 1. Kiểm tra điểm hiện tại
+        current_score = len(self.snake.body) - 3
+        
+        # 2. Nếu điểm cao hơn kỷ lục -> Lưu
+        if current_score > self.high_score:
+            self.high_score = current_score
+            self.hs_manager.save(self.high_score) # Gọi qua manager
+            
         self.game_running = False 
+    # ---------------------------
 
     def reset_game(self):
         self.snake.reset()
         self.food.position = self.food.generate_random_pos(self.snake.body)
         self.game_running = True
         self.countdown_active = False
-        self.load_high_score()
+        # Load lại điểm cao (đề phòng có thay đổi từ bên ngoài)
+        self.high_score = self.hs_manager.load()

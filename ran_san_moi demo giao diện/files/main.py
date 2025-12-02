@@ -42,6 +42,7 @@ def show_loading_screen():
     if MUSIC_LOADED:
         try:
             pygame.mixer.music.play(-1) 
+            print("--->ĐÃ tải nhạc")
         except: pass
 
     # 4. GIỮ NGUYÊN TRẠNG THÁI NÀY TRONG 3 GIÂY
