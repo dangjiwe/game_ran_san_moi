@@ -10,7 +10,7 @@ class Snake:
         self.body = [Vector2(10, 10), Vector2(9, 10), Vector2(8, 10)]
         # Hướng đi ban đầu: sang phải
         self.direction = Vector2(1, 0)
-        # Sửa Bug 4: next_direction để ngăn đổi hướng 180 độ đột ngột
+        # Sửa Bug 3 & 4: next_direction để ngăn đổi hướng 180 độ đột ngột
         self.next_direction = Vector2(1, 0) 
         self.new_block = False 
 
@@ -32,7 +32,7 @@ class Snake:
         # 2. Vẽ Đầu Rắn
         head_segment = self.body[0]
         
-        # --- KHẮC PHỤC LỖI #2: Căn chỉnh đầu rắn lớn hơn cell_size ---
+        # --- KHẮC PHỤC LỖI: Căn chỉnh đầu rắn lớn hơn cell_size ---
         offset_adjust = (HEAD_SIZE - cell_size) // 2 
         
         head_rect = pygame.Rect(OFFSET + head_segment.x * cell_size - offset_adjust, 
@@ -63,6 +63,7 @@ class Snake:
         self.direction = self.next_direction 
         # ---------------------------------------------------------------------
         
+        # Xử lý Bug 4: Đảm bảo new_block được xử lý đúng
         if self.new_block:
             body_copy = self.body[:] 
             self.new_block = False

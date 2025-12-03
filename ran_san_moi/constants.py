@@ -29,7 +29,7 @@ HEAD_SIZE = int(cell_size * HEAD_SCALE_FACTOR)
 screen_width = 2 * OFFSET + cell_size * number_of_cells
 screen_height = 2 * OFFSET + cell_size * number_of_cells
 
-# --- KHẮC PHỤC LỖI #1: Đảm bảo Pygame được init trước set_timer (trong main.py) ---
+# --- KHẮC PHỤC LỖI #1: Đảm bảo Pygame được init trước set_timer ---
 pygame.init()
 # ----------------------------------------------------------------------------------
 
@@ -40,13 +40,20 @@ pygame.display.set_caption("Ran_San_Moi")
 # Định nghĩa Event cho chuyển động
 SCREEN_UPDATE = pygame.USEREVENT
 
-# --- BỔ SUNG FONT CHỮ ---
-# Khởi tạo font để hiển thị Game Over
+# --- BỔ SUNG FONT CHỮ VÀ PHÂN LOẠI (ĐÃ SỬA FONT TIMES NEW ROMAN) ---
+FONT_NAME = 'Times New Roman'
+
 try:
-    font = pygame.font.Font(None, 40) # Font mặc định của Pygame, cỡ 40
+    # 1. Font cho Game Over và Text chung (Cỡ 30)
+    font = pygame.font.SysFont(FONT_NAME, 30) 
+    # 2. Font cho Điểm số (Cỡ 35, nổi bật hơn)
+    score_font = pygame.font.SysFont(FONT_NAME, 35)
 except:
+    # Dùng Arial hoặc font mặc định nếu Times New Roman lỗi/không tìm thấy
+    print(f"Cảnh báo: Không tìm thấy font '{FONT_NAME}'. Dùng Arial/Mặc định.")
     font = pygame.font.SysFont('Arial', 40)
-# -------------------------
+    score_font = pygame.font.SysFont('Arial', 50)
+# ----------------------------------------------------------------------
 
 # Tải và Xử lý bề mặt (Surface)
 try:

@@ -7,7 +7,7 @@ from constants import SCREEN_UPDATE
 from game import Game
 from pygame.math import Vector2 
 
-# Thiết lập tốc độ di chuyển
+# Thiết lập tốc độ di chuyển (Khắc phục lỗi #2)
 # Không cần gọi pygame.init() ở đây vì đã gọi trong constants.py
 pygame.time.set_timer(SCREEN_UPDATE, 150)
 
@@ -27,13 +27,13 @@ while True:
         if event.type == SCREEN_UPDATE:
             game.update()
             
-        # 2. Xử lý Input điều khiển rắn
+        # 2. Xử lý Input điều khiển rắn (Khắc phục lỗi #3 & #4)
         if event.type == pygame.KEYDOWN:
-            # Sửa Bug 4: Chỉ cập nhật next_direction, ngăn đổi hướng 180 độ
+            # Chỉ cập nhật next_direction, ngăn đổi hướng 180 độ
             if game.game_running:
                 current_direction = game.snake.direction 
                 
-                # Kiểm tra hướng ngược để ngăn đổi hướng 180 độ (Bug #4)
+                # Kiểm tra hướng ngược để ngăn đổi hướng 180 độ
                 if event.key == pygame.K_UP and current_direction.y != 1: 
                     game.snake.next_direction = Vector2(0, -1)
                 elif event.key == pygame.K_DOWN and current_direction.y != -1: 
@@ -43,7 +43,7 @@ while True:
                 elif event.key == pygame.K_RIGHT and current_direction.x != -1: 
                     game.snake.next_direction = Vector2(1, 0)
             
-            # Reset Game khi Game Over (nhấn SPACE) (Bug #3)
+            # Reset Game khi Game Over (nhấn SPACE)
             elif event.key == pygame.K_SPACE and not game.game_running: 
                 game.reset_game()
                 
@@ -54,4 +54,4 @@ while True:
     pygame.display.update()
     
     # Giới hạn tốc độ khung hình (FPS)
-    clock.tick(60)
+    clock.tick(55)

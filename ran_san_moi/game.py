@@ -2,7 +2,8 @@
 
 from snake import Snake
 from food import Food
-from constants import screen, GREEN, DARK_GREEN, cell_size, number_of_cells, OFFSET, font
+# Import từ constants: BỔ SUNG score_font
+from constants import screen, GREEN, DARK_GREEN, cell_size, number_of_cells, OFFSET, font, score_font
 import pygame
 from pygame.math import Vector2 
 
@@ -17,15 +18,13 @@ class Game:
         if self.game_running:
             self.snake.move_snake()
             
-            # --- KHÔI PHỤC: Xuyên tường (A ra B) ---
+            # --- CHỨC NĂNG XUYÊN TƯỜNG (A ra B) ---
             self.wrap_around_walls() 
-            # BỎ: self.check_wall_collision()
             
             self.check_eat_food()
             self.check_self_collision()
 
     def draw_elements(self):
-        # Nội dung giữ nguyên
         self.draw_grass() 
         self.food.draw()
         self.snake.draw()
@@ -35,7 +34,6 @@ class Game:
             self.draw_game_over()
 
     def draw_grass(self):
-        # Nội dung giữ nguyên
         screen.fill(GREEN)
         pygame.draw.rect(screen, DARK_GREEN, 
             (OFFSET - 5, OFFSET - 5, 
@@ -43,7 +41,6 @@ class Game:
              cell_size * number_of_cells + 10), 5)
         
     def check_eat_food(self):
-        # Nội dung giữ nguyên
         head = self.snake.body[0]
         
         if head == self.food.position:
@@ -52,16 +49,12 @@ class Game:
             self.score += 1
             
     def check_self_collision(self):
-        # Nội dung giữ nguyên (Thua khi chạm thân)
         if self.snake.check_self_bite():
             self.game_over()
             
-    # --- LOẠI BỎ: Va chạm với tường (Biên) ---
     def check_wall_collision(self):
-        # Hàm này không còn được gọi trong update()
         pass
 
-    # --- CHỨC NĂNG XUYÊN TƯỜNG (A ra B) ---
     def wrap_around_walls(self):
         head = self.snake.body[0]
         
@@ -77,24 +70,20 @@ class Game:
         elif head.y < 0:
             head.y = number_of_cells - 1
 
-        # NOTE: Vì head là Vector2, các thay đổi trên head đã thay đổi body[0]
-        # Không cần gán lại: self.snake.body[0] = head 
         
     def game_over(self):
-        # Nội dung giữ nguyên
         self.game_running = False
         
     def reset_game(self):
-        # Nội dung giữ nguyên
         self.snake.reset()
         self.food.position = self.food.generate_random_pos(self.snake.body)
         self.game_running = True
         self.score = 0
         
     def draw_score(self):
-        # Nội dung giữ nguyên
+        # --- ĐÃ SỬA: Dùng score_font (cỡ 60, Times New Roman) ---
         score_text = str(self.score)
-        score_surf = font.render(score_text, True, DARK_GREEN)
+        score_surf = score_font.render(score_text, True, DARK_GREEN) 
         
         score_x = OFFSET - 5
         score_y = OFFSET + cell_size * number_of_cells + 10 
@@ -102,7 +91,7 @@ class Game:
         screen.blit(score_surf, (score_x, score_y))
         
     def draw_game_over(self):
-        # Nội dung giữ nguyên
+        # Dùng font (cỡ 40, Times New Roman) cho Game Over
         line1_text = "GAME OVER!"
         line2_text = "NHAN SPACE DE CHOI LAI."
         
