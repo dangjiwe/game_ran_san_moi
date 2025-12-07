@@ -1,3 +1,4 @@
+#nằm trong constants.py
 import os
 
 # --- ĐƯỜNG DẪN ---

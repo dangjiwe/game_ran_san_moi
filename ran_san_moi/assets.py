@@ -1,3 +1,4 @@
+#nằm trong constants.py
 import pygame
 import os
 from settings import (
