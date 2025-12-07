@@ -1,45 +1,100 @@
-# constants.py
+# files/Resources/constants.py
 
 import pygame
 import os 
-from pygame.math import Vector2
+import sys 
 
-# --- BỔ SUNG KHẮC PHỤC LỖI PATH ---
-# Lấy đường dẫn tuyệt đối của thư mục chứa file constants.py
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# ------------------------------------
+# ==========================================
+# 1. HÀM XỬ LÝ ĐƯỜNG DẪN
+# ==========================================
+def resource_path(relative_path, sub_dir):
+    try:
+        base_path = sys._MEIPASS 
+    except Exception:
+        base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+    return os.path.join(base_path, sub_dir, relative_path)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+PROJECT_ROOT = os.path.dirname(BASE_DIR) 
+
+# ==========================================
+# 2. CẤU HÌNH & MÀU SẮC (ĐẶT LÊN ĐẦU)
+# ==========================================
+# Phải định nghĩa các biến này trước khi khởi tạo màn hình
 
 # Màu sắc
+GRASS_LIGHT = (170, 215, 81)  
+GRASS_DARK  = (162, 209, 73)
+BORDER_COLOR = (87, 138, 52) 
 GREEN = (173, 204, 96)
-DARK_GREEN = (43, 51, 24)
 YELLOW = (255, 200, 0)
+WHITE = (255, 255, 255)
 BLACK = (0, 0, 0) 
 HEAD_COLOR = (255, 60, 60) 
+DARK_GREEN = (43, 51, 24) 
 
-# Cấu hình lưới
-cell_size = 25
-number_of_cells = 20
-OFFSET = 75
+# Kích thước lưới
+cell_size = 25       
+number_of_cells = 20 
+OFFSET = 75          
 
-# Cấu hình Đầu Rắn
-HEAD_SCALE_FACTOR = 1.4
+HEAD_SCALE_FACTOR = 2.5
 HEAD_SIZE = int(cell_size * HEAD_SCALE_FACTOR)
 
-# Kích thước Màn hình
+# Kích thước màn hình
 screen_width = 2 * OFFSET + cell_size * number_of_cells
 screen_height = 2 * OFFSET + cell_size * number_of_cells
 
+<<<<<<< HEAD
+# ==========================================
+# 3. KHỞI TẠO PYGAME & MÀN HÌNH
+# ==========================================
+# Fix độ trễ âm thanh
+try:
+    pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=128)
+except Exception: pass
+=======
 # --- KHẮC PHỤC LỖI #1: Đảm bảo Pygame được init trước set_timer ---
 pygame.init()
 # ----------------------------------------------------------------------------------
+>>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
 
-# Khởi tạo Cửa sổ
+pygame.init() 
+
+# Tạo màn hình (Lúc này screen_width đã được định nghĩa ở trên -> Không lỗi)
 screen = pygame.display.set_mode((screen_width, screen_height)) 
 pygame.display.set_caption("Ran_San_Moi")
-
-# Định nghĩa Event cho chuyển động
 SCREEN_UPDATE = pygame.USEREVENT
 
+<<<<<<< HEAD
+# ==========================================
+# 4. TẢI TÀI NGUYÊN (FONTS, ẢNH, NHẠC)
+# ==========================================
+
+# --- TẢI ÂM THANH ---
+MUSIC_LOADED = False
+eat_sound = None
+
+try:
+    # Nhạc nền
+    music_path = resource_path("nhac_nen.wav", sub_dir=os.path.join("Extra", "Sound_DLC"))
+    if os.path.exists(music_path):
+        pygame.mixer.music.load(music_path)
+        MUSIC_LOADED = True
+    
+    # Âm thanh ăn mồi
+    eat_path = resource_path("eat.wav", sub_dir=os.path.join("Extra", "Sound_DLC"))
+    if os.path.exists(eat_path):
+        eat_sound = pygame.mixer.Sound(eat_path)
+        eat_sound.set_volume(1.0)
+except Exception as e:
+    print(f"Loi am thanh: {e}")
+
+# --- TẢI FONT ---
+try:
+    font_path = resource_path("font_game.ttf", sub_dir=os.path.join("Extra", "Text"))
+    font = pygame.font.Font(font_path, 40)
+=======
 # --- BỔ SUNG FONT CHỮ VÀ PHÂN LOẠI (ĐÃ SỬA FONT TIMES NEW ROMAN) ---
 FONT_NAME = 'Times New Roman'
 
@@ -48,30 +103,72 @@ try:
     font = pygame.font.SysFont(FONT_NAME, 30) 
     # 2. Font cho Điểm số (Cỡ 35, nổi bật hơn)
     score_font = pygame.font.SysFont(FONT_NAME, 35)
+>>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
 except:
     # Dùng Arial hoặc font mặc định nếu Times New Roman lỗi/không tìm thấy
     print(f"Cảnh báo: Không tìm thấy font '{FONT_NAME}'. Dùng Arial/Mặc định.")
     font = pygame.font.SysFont('Arial', 40)
+<<<<<<< HEAD
+=======
     score_font = pygame.font.SysFont('Arial', 50)
 # ----------------------------------------------------------------------
+>>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
 
-# Tải và Xử lý bề mặt (Surface)
+# --- TẢI ẢNH ---
 try:
-    # Bề mặt Thức ăn
-    food_path = os.path.join(BASE_DIR, "food.png")
+    food_path = resource_path("food.png", sub_dir="CDNImage") 
     food_surface = pygame.image.load(food_path)
     food_surface = pygame.transform.scale(food_surface, (cell_size, cell_size)) 
-except pygame.error:
-    print("Lỗi: Không tìm thấy file 'food.png'. Sử dụng màu mặc định.")
+except:
     food_surface = pygame.Surface((cell_size, cell_size))
     food_surface.fill(DARK_GREEN) 
     
 try:
-    # Bề mặt Đầu Rắn
-    head_path = os.path.join(BASE_DIR, "dauran.png")
+    head_path = resource_path("dauran.png", sub_dir="CDNImage")
     snake_head_surface = pygame.image.load(head_path).convert_alpha()
     snake_head_surface = pygame.transform.scale(snake_head_surface, (HEAD_SIZE, HEAD_SIZE))
-except pygame.error:
-    print("Lỗi: Không tìm thấy file 'dauran.png'. Sử dụng màu mặc định.")
+    pygame.display.set_icon(snake_head_surface)
+except:
     snake_head_surface = pygame.Surface((HEAD_SIZE, HEAD_SIZE))
     snake_head_surface.fill(HEAD_COLOR)
+
+# Background (để None vì vẽ bằng code)
+bg_surface = None
+
+
+# --- TẢI ẢNH NỀN MENU (MỚI) ---
+menu_bg_surface = None
+
+try:
+    # Tên file ảnh bạn vừa chép vào
+    menu_bg_path = resource_path("menu_bg.jpg", sub_dir="CDNImage")
+    
+    if os.path.exists(menu_bg_path):
+        img = pygame.image.load(menu_bg_path)
+        # Co giãn ảnh cho vừa khít màn hình
+        menu_bg_surface = pygame.transform.scale(img, (screen_width, screen_height))
+        print("----> Da tai hinh nen Menu!")
+    else:
+        print("----> Khong tim thay menu_bg.png, dung mau nen mac dinh.")
+        
+except Exception as e:
+    print(f"Loi tai nen Menu: {e}")
+
+
+    # --- TẢI ẢNH NỀN LOADING (MỚI) ---
+loading_bg_surface = None
+
+try:
+    # Tên file ảnh bạn vừa chép vào
+    loading_path = resource_path("loading_bg.png", sub_dir="CDNImage")
+    
+    if os.path.exists(loading_path):
+        img = pygame.image.load(loading_path)
+        # Co giãn ảnh cho vừa khít màn hình
+        loading_bg_surface = pygame.transform.scale(img, (screen_width, screen_height))
+        print("----> Da tai hinh nen Loading!")
+    else:
+        print("----> Khong tim thay loading_bg.jpg, dung mau nen mac dinh.")
+        
+except Exception as e:
+    print(f"Loi tai nen Loading: {e}")
