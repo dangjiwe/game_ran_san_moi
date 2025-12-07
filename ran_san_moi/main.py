@@ -4,6 +4,7 @@ import pygame
 import sys
 import os 
 from pygame.math import Vector2 
+from game import Game
 
 """
 #tôi đề xuất vô hiệu hóa thiết lập path để chỉnh kết nối thư viện
