@@ -2,15 +2,10 @@
 
 from snake import Snake
 from food import Food
-<<<<<<< HEAD
 # Import HighScoreManager mới
 from highscore import HighScoreManager 
 # Import đầy đủ các biến cần thiết từ constants
 from constants import screen, GRASS_LIGHT, GRASS_DARK, BORDER_COLOR, DARK_GREEN, cell_size, number_of_cells, OFFSET, font, screen_width, screen_height, BLACK, bg_surface, eat_sound
-=======
-# Import từ constants: BỔ SUNG score_font
-from constants import screen, GREEN, DARK_GREEN, cell_size, number_of_cells, OFFSET, font, score_font
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
 import pygame
 
 class Game:
@@ -49,18 +44,10 @@ class Game:
 
         if self.game_running:
             self.snake.move_snake()
-<<<<<<< HEAD
-=======
-            
-            # --- CHỨC NĂNG XUYÊN TƯỜNG (A ra B) ---
-            self.wrap_around_walls() 
-            
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
             self.check_eat_food()
             self.check_wall_collision()
             self.check_self_collision()
 
-<<<<<<< HEAD
     def draw_button(self, text, x_offset, y_pos):
         text_surf = font.render(text, True, BLACK)
         button_w = text_surf.get_width() + 30
@@ -72,9 +59,6 @@ class Game:
         return rect
 
     def draw_elements(self, is_paused):
-=======
-    def draw_elements(self):
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
         self.draw_grass() 
         
         if self.game_running or is_paused:
@@ -99,7 +83,6 @@ class Game:
             self.draw_countdown()
 
     def draw_grass(self):
-<<<<<<< HEAD
         if bg_surface:
              screen.blit(bg_surface, (0, 0))
         else:
@@ -151,35 +134,10 @@ class Game:
                 eat_sound.play()
 
     def check_wall_collision(self):
-=======
-        screen.fill(GREEN)
-        pygame.draw.rect(screen, DARK_GREEN, 
-            (OFFSET - 5, OFFSET - 5, 
-             cell_size * number_of_cells + 10, 
-             cell_size * number_of_cells + 10), 5)
-        
-    def check_eat_food(self):
-        head = self.snake.body[0]
-        
-        if head == self.food.position:
-            self.snake.add_block()
-            self.food.position = self.food.generate_random_pos(self.snake.body)
-            self.score += 1
-            
-    def check_self_collision(self):
-        if self.snake.check_self_bite():
-            self.game_over()
-            
-    def check_wall_collision(self):
-        pass
-
-    def wrap_around_walls(self):
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
         head = self.snake.body[0]
         if not (0 <= head.x < number_of_cells and 0 <= head.y < number_of_cells):
             self.game_over()
 
-<<<<<<< HEAD
     def check_self_collision(self):
         if self.snake.body[0] in self.snake.body[1:]:
             self.game_over()
@@ -188,11 +146,6 @@ class Game:
     def game_over(self):
         # 1. Kiểm tra điểm hiện tại
         current_score = len(self.snake.body) - 3
-=======
-        
-    def game_over(self):
-        self.game_running = False
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
         
         # 2. Nếu điểm cao hơn kỷ lục -> Lưu
         if current_score > self.high_score:
@@ -206,40 +159,6 @@ class Game:
         self.snake.reset()
         self.food.position = self.food.generate_random_pos(self.snake.body)
         self.game_running = True
-<<<<<<< HEAD
         self.countdown_active = False
         # Load lại điểm cao (đề phòng có thay đổi từ bên ngoài)
         self.high_score = self.hs_manager.load()
-=======
-        self.score = 0
-        
-    def draw_score(self):
-        # --- ĐÃ SỬA: Dùng score_font (cỡ 60, Times New Roman) ---
-        score_text = str(self.score)
-        score_surf = score_font.render(score_text, True, DARK_GREEN) 
-        
-        score_x = OFFSET - 5
-        score_y = OFFSET + cell_size * number_of_cells + 10 
-        
-        screen.blit(score_surf, (score_x, score_y))
-        
-    def draw_game_over(self):
-        # Dùng font (cỡ 40, Times New Roman) cho Game Over
-        line1_text = "GAME OVER!"
-        line2_text = "NHAN SPACE DE CHOI LAI."
-        
-        line1_surf = font.render(line1_text, True, DARK_GREEN)
-        line2_surf = font.render(line2_text, True, DARK_GREEN)
-        
-        screen_width = pygame.display.get_surface().get_width()
-        screen_height = pygame.display.get_surface().get_height()
-        
-        total_height = line1_surf.get_height() + line2_surf.get_height() + 10 
-        start_y = (screen_height - total_height) // 2
-        
-        line1_x = (screen_width - line1_surf.get_width()) // 2
-        line2_x = (screen_width - line2_surf.get_width()) // 2
-        
-        screen.blit(line1_surf, (line1_x, start_y))
-        screen.blit(line2_surf, (line2_x, start_y + line1_surf.get_height() + 10))
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f

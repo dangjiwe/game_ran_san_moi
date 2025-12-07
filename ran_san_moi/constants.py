@@ -45,7 +45,6 @@ HEAD_SIZE = int(cell_size * HEAD_SCALE_FACTOR)
 screen_width = 2 * OFFSET + cell_size * number_of_cells
 screen_height = 2 * OFFSET + cell_size * number_of_cells
 
-<<<<<<< HEAD
 # ==========================================
 # 3. KHỞI TẠO PYGAME & MÀN HÌNH
 # ==========================================
@@ -53,11 +52,6 @@ screen_height = 2 * OFFSET + cell_size * number_of_cells
 try:
     pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=128)
 except Exception: pass
-=======
-# --- KHẮC PHỤC LỖI #1: Đảm bảo Pygame được init trước set_timer ---
-pygame.init()
-# ----------------------------------------------------------------------------------
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
 
 pygame.init() 
 
@@ -66,7 +60,6 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Ran_San_Moi")
 SCREEN_UPDATE = pygame.USEREVENT
 
-<<<<<<< HEAD
 # ==========================================
 # 4. TẢI TÀI NGUYÊN (FONTS, ẢNH, NHẠC)
 # ==========================================
@@ -94,25 +87,8 @@ except Exception as e:
 try:
     font_path = resource_path("font_game.ttf", sub_dir=os.path.join("Extra", "Text"))
     font = pygame.font.Font(font_path, 40)
-=======
-# --- BỔ SUNG FONT CHỮ VÀ PHÂN LOẠI (ĐÃ SỬA FONT TIMES NEW ROMAN) ---
-FONT_NAME = 'Times New Roman'
-
-try:
-    # 1. Font cho Game Over và Text chung (Cỡ 30)
-    font = pygame.font.SysFont(FONT_NAME, 30) 
-    # 2. Font cho Điểm số (Cỡ 35, nổi bật hơn)
-    score_font = pygame.font.SysFont(FONT_NAME, 35)
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
 except:
-    # Dùng Arial hoặc font mặc định nếu Times New Roman lỗi/không tìm thấy
-    print(f"Cảnh báo: Không tìm thấy font '{FONT_NAME}'. Dùng Arial/Mặc định.")
     font = pygame.font.SysFont('Arial', 40)
-<<<<<<< HEAD
-=======
-    score_font = pygame.font.SysFont('Arial', 50)
-# ----------------------------------------------------------------------
->>>>>>> 9f48edf2ceeac4699683a0c309e061e6e62ab50f
 
 # --- TẢI ẢNH ---
 try:
