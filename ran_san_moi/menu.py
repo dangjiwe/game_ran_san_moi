@@ -1,4 +1,4 @@
-# files/Resources/menu.py
+# files/menu.py
 
 import pygame
 import sys

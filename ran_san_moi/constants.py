@@ -4,6 +4,9 @@ import pygame
 import os 
 import sys 
 
+
+#Như tôi đã nối rùi tôi sẽ vô hiệu hóa path
+"""
 # ==========================================
 # 1. HÀM XỬ LÝ ĐƯỜNG DẪN
 # ==========================================
@@ -13,9 +16,11 @@ def resource_path(relative_path, sub_dir):
     except Exception:
         base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
     return os.path.join(base_path, sub_dir, relative_path)
-
+"""
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 PROJECT_ROOT = os.path.dirname(BASE_DIR) 
+
+
 
 # ==========================================
 # 2. CẤU HÌNH & MÀU SẮC (ĐẶT LÊN ĐẦU)
@@ -70,13 +75,13 @@ eat_sound = None
 
 try:
     # Nhạc nền
-    music_path = resource_path("nhac_nen.wav", sub_dir=os.path.join("Extra", "Sound_DLC"))
+    music_path = os.path.join(BASE_DIR, "nhac_nen.wav")#, sub_dir=os.path.join("Extra", "Sound_DLC"))
     if os.path.exists(music_path):
         pygame.mixer.music.load(music_path)
         MUSIC_LOADED = True
     
     # Âm thanh ăn mồi
-    eat_path = resource_path("eat.wav", sub_dir=os.path.join("Extra", "Sound_DLC"))
+    eat_path = os.path.join(BASE_DIR, "eat.wav")#, sub_dir=os.path.join("Extra", "Sound_DLC"))
     if os.path.exists(eat_path):
         eat_sound = pygame.mixer.Sound(eat_path)
         eat_sound.set_volume(1.0)
@@ -85,14 +90,14 @@ except Exception as e:
 
 # --- TẢI FONT ---
 try:
-    font_path = resource_path("font_game.ttf", sub_dir=os.path.join("Extra", "Text"))
+    font_path = os.path.join(BASE_DIR, "font_game.ttf")#, sub_dir=os.path.join("Extra", "Text"))
     font = pygame.font.Font(font_path, 40)
 except:
     font = pygame.font.SysFont('Arial', 40)
 
 # --- TẢI ẢNH ---
 try:
-    food_path = resource_path("food.png", sub_dir="CDNImage") 
+    food_path = os.path.join(BASE_DIR, "food.png")#, sub_dir="CDNImage") 
     food_surface = pygame.image.load(food_path)
     food_surface = pygame.transform.scale(food_surface, (cell_size, cell_size)) 
 except:
@@ -100,7 +105,7 @@ except:
     food_surface.fill(DARK_GREEN) 
     
 try:
-    head_path = resource_path("dauran.png", sub_dir="CDNImage")
+    head_path = os.path.join(BASE_DIR, "dauran.png")#, sub_dir="CDNImage")
     snake_head_surface = pygame.image.load(head_path).convert_alpha()
     snake_head_surface = pygame.transform.scale(snake_head_surface, (HEAD_SIZE, HEAD_SIZE))
     pygame.display.set_icon(snake_head_surface)
@@ -117,7 +122,7 @@ menu_bg_surface = None
 
 try:
     # Tên file ảnh bạn vừa chép vào
-    menu_bg_path = resource_path("menu_bg.jpg", sub_dir="CDNImage")
+    menu_bg_path = os.path.join(BASE_DIR, "menu_bg.jpg")#, sub_dir="CDNImage")
     
     if os.path.exists(menu_bg_path):
         img = pygame.image.load(menu_bg_path)
@@ -136,7 +141,7 @@ loading_bg_surface = None
 
 try:
     # Tên file ảnh bạn vừa chép vào
-    loading_path = resource_path("loading_bg.png", sub_dir="CDNImage")
+    loading_path = os.path.join(BASE_DIR, "loading_bg.png")#, sub_dir="CDNImage")
     
     if os.path.exists(loading_path):
         img = pygame.image.load(loading_path)

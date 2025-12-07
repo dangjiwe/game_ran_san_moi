@@ -5,11 +5,13 @@ import sys
 import os 
 from pygame.math import Vector2 
 
-
+"""
 #tôi đề xuất vô hiệu hóa thiết lập path để chỉnh kết nối thư viện
 # --- THIẾT LẬP PATH ---
 current_dir = os.path.dirname(os.path.abspath(__file__)) 
 sys.path.append(os.path.join(current_dir, 'Resources')) 
+"""
+
 
 from game import Game
 from menu import Menu 
