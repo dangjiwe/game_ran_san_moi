@@ -1,4 +1,4 @@
-# main.py
+# files/main.py
 
 import pygame
 import sys
@@ -17,7 +17,19 @@ game = Game()
 # Khởi tạo Clock
 clock = pygame.time.Clock()
 
+# --- CHẠY LOADING ---
+show_loading_screen()
+# --------------------
+
+# Sau khi Loading xong mới khởi tạo Game
+game = Game()
+menu = Menu(game.high_score) 
+is_paused = False 
+
+# --- VÒNG LẶP CHÍNH ---
 while True:
+    menu.high_score_data = game.high_score
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()

@@ -1,10 +1,8 @@
 # files/Resources/game.py
-
 from snake import Snake
 from food import Food
-# Import HighScoreManager mới
 from highscore import HighScoreManager 
-# Import đầy đủ các biến cần thiết từ constants
+from pygame.math import Vector2
 from constants import screen, GRASS_LIGHT, GRASS_DARK, BORDER_COLOR, DARK_GREEN, cell_size, number_of_cells, OFFSET, font, screen_width, screen_height, BLACK, bg_surface, eat_sound
 import pygame
 
@@ -14,19 +12,63 @@ class Game:
         self.food = Food(self.snake.body)
         self.game_running = True 
         
-        # --- SỬ DỤNG QUẢN LÝ ĐIỂM (CODE MỚI) ---
         self.hs_manager = HighScoreManager()
         self.high_score = self.hs_manager.load()
-        # ---------------------------------------
         
         self.pause_button_rect = None 
         self.back_button_rect = None
-        
         self.countdown_active = False
         self.countdown_value = 3
         self.last_countdown_time = 0
 
-    # (ĐÃ XÓA hàm load_high_score và save_high_score cũ ở đây vì không cần nữa)
+    def save_current_game(self):
+        data = {
+            'snake_body': [[b.x, b.y] for b in self.snake.body],
+            'snake_direction': [self.snake.direction.x, self.snake.direction.y],
+            'food_position': [self.food.position.x, self.food.position.y],
+            'current_score': len(self.snake.body) - 3,
+            'high_score': self.high_score
+        }
+        self.hs_manager.save_game_state(data)
+
+    # --- [SỬA LỖI Ở ĐÂY] ---
+    def load_saved_game(self):
+        data = self.hs_manager.load_game_state()
+        
+        if data and 'snake_body' in data:
+            try:
+                self.snake.body = [Vector2(pos[0], pos[1]) for pos in data['snake_body']]
+                d = data['snake_direction']
+                self.snake.direction = Vector2(d[0], d[1])
+                f = data['food_position']
+                self.food.position = Vector2(f[0], f[1])
+                self.high_score = data.get('high_score', self.high_score)
+                
+                # === QUAN TRỌNG: PHẢI BẬT GAME LÊN ===
+                self.game_running = True 
+                self.countdown_active = False
+                # ======================================
+                
+                print("----> Load thanh cong!")
+                return True
+            except:
+                self.reset_game()
+                return False
+        else:
+            print("----> File save rong!")
+            return False
+
+    # --- XÓA FILE KHI THUA ---
+    def game_over(self):
+        current_score = len(self.snake.body) - 3
+        if current_score > self.high_score:
+            self.high_score = current_score
+            self.hs_manager.save(self.high_score)
+        
+        # Xóa sạch dữ liệu trong file save ngay lập tức
+        self.hs_manager.clear_saved_game()
+        
+        self.game_running = False 
 
     def start_countdown(self):
         self.countdown_active = True
@@ -38,29 +80,16 @@ class Game:
             if pygame.time.get_ticks() - self.last_countdown_time >= 1000:
                 self.countdown_value -= 1
                 self.last_countdown_time = pygame.time.get_ticks()
-                if self.countdown_value == 0:
-                    self.countdown_active = False
+                if self.countdown_value == 0: self.countdown_active = False
             return 
-
         if self.game_running:
             self.snake.move_snake()
             self.check_eat_food()
             self.check_wall_collision()
             self.check_self_collision()
 
-    def draw_button(self, text, x_offset, y_pos):
-        text_surf = font.render(text, True, BLACK)
-        button_w = text_surf.get_width() + 30
-        button_h = text_surf.get_height() + 20
-        rect = pygame.Rect(x_offset, y_pos, button_w, button_h)
-        pygame.draw.rect(screen, (200, 200, 200), rect, 0, 8) 
-        pygame.draw.rect(screen, BLACK, rect, 2, 8)
-        screen.blit(text_surf, text_surf.get_rect(center=rect.center))
-        return rect
-
     def draw_elements(self, is_paused):
         self.draw_grass() 
-        
         if self.game_running or is_paused:
             grid_bottom = OFFSET + (cell_size * number_of_cells)
             btn_y = grid_bottom + 15
@@ -75,27 +104,32 @@ class Game:
         elif is_paused:
             self.draw_paused_msg()
             
-        if not self.game_running:
+        # Không vẽ Game Over khi đang đếm ngược
+        if not self.game_running and not self.countdown_active:
             self.draw_game_over()
         
         self.draw_score() 
-        if self.countdown_active:
-            self.draw_countdown()
+        if self.countdown_active: self.draw_countdown()
 
     def draw_grass(self):
-        if bg_surface:
-             screen.blit(bg_surface, (0, 0))
+        if bg_surface: screen.blit(bg_surface, (0, 0))
         else:
             screen.fill(BORDER_COLOR)
             for row in range(number_of_cells):
                 for col in range(number_of_cells):
-                    x = OFFSET + col * cell_size
-                    y = OFFSET + row * cell_size
-                    rect = pygame.Rect(x, y, cell_size, cell_size)
-                    if (row + col) % 2 == 0:
-                        pygame.draw.rect(screen, GRASS_LIGHT, rect)
-                    else:
-                        pygame.draw.rect(screen, GRASS_DARK, rect)
+                    rect = pygame.Rect(OFFSET+col*cell_size, OFFSET+row*cell_size, cell_size, cell_size)
+                    color = GRASS_LIGHT if (row+col)%2==0 else GRASS_DARK
+                    pygame.draw.rect(screen, color, rect)
+
+    def draw_button(self, text, x_offset, y_pos):
+        text_surf = font.render(text, True, BLACK)
+        button_w = text_surf.get_width() + 30
+        button_h = text_surf.get_height() + 20
+        rect = pygame.Rect(x_offset, y_pos, button_w, button_h)
+        pygame.draw.rect(screen, (200, 200, 200), rect, 0, 8) 
+        pygame.draw.rect(screen, BLACK, rect, 2, 8)
+        screen.blit(text_surf, text_surf.get_rect(center=rect.center))
+        return rect
 
     def draw_countdown(self):
         txt = str(self.countdown_value)
@@ -130,8 +164,7 @@ class Game:
         if self.food.position == self.snake.body[0]:
             self.food.position = self.food.generate_random_pos(self.snake.body)
             self.snake.add_block()
-            if eat_sound:
-                eat_sound.play()
+            if eat_sound: eat_sound.play()
 
     def check_wall_collision(self):
         head = self.snake.body[0]
@@ -142,23 +175,9 @@ class Game:
         if self.snake.body[0] in self.snake.body[1:]:
             self.game_over()
 
-    # --- SỬA LOGIC GAME OVER ---
-    def game_over(self):
-        # 1. Kiểm tra điểm hiện tại
-        current_score = len(self.snake.body) - 3
-        
-        # 2. Nếu điểm cao hơn kỷ lục -> Lưu
-        if current_score > self.high_score:
-            self.high_score = current_score
-            self.hs_manager.save(self.high_score) # Gọi qua manager
-            
-        self.game_running = False 
-    # ---------------------------
-
     def reset_game(self):
         self.snake.reset()
         self.food.position = self.food.generate_random_pos(self.snake.body)
         self.game_running = True
         self.countdown_active = False
-        # Load lại điểm cao (đề phòng có thay đổi từ bên ngoài)
         self.high_score = self.hs_manager.load()
