@@ -1,25 +1,26 @@
 {
-    "high_score": 8,
     "snake_body": [
         [
-            20,
-            9
+            6.0,
+            9.0
         ],
         [
-            19,
-            9
+            5.0,
+            9.0
         ],
         [
-            18,
-            9
+            4.0,
+            9.0
         ]
     ],
     "snake_direction": [
-        1,
-        0
+        1.0,
+        0.0
     ],
     "food_position": [
-        17,
-        6
-    ]
+        2.0,
+        18.0
+    ],
+    "current_score": 0,
+    "high_score": 12
 }

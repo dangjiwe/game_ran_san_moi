@@ -44,9 +44,9 @@ SCREEN_UPDATE = pygame.USEREVENT
 FONT_NAME = 'Times New Roman'
 
 try:
-    # 1. Font cho Game Over và Text chung (Cỡ 40)
-    font = pygame.font.SysFont(FONT_NAME, 40) 
-    # 2. Font cho Điểm số (Cỡ 60, nổi bật hơn)
+    # 1. Font cho Game Over và Text chung (Cỡ 30)
+    font = pygame.font.SysFont(FONT_NAME, 30) 
+    # 2. Font cho Điểm số (Cỡ 35, nổi bật hơn)
     score_font = pygame.font.SysFont(FONT_NAME, 35)
 except:
     # Dùng Arial hoặc font mặc định nếu Times New Roman lỗi/không tìm thấy

@@ -1,12 +1,14 @@
-# main.py
+# files/main.py
 
 import pygame
 import sys
+# Import constants sớm để pygame.init() được gọi (Khắc phục lỗi #1)
 from constants import SCREEN_UPDATE 
 from game import Game
 from pygame.math import Vector2 
 
-# Thiết lập tốc độ di chuyển
+# Thiết lập tốc độ di chuyển (Khắc phục lỗi #2)
+# Không cần gọi pygame.init() ở đây vì đã gọi trong constants.py
 pygame.time.set_timer(SCREEN_UPDATE, 150)
 
 # Khởi tạo đối tượng Game
@@ -15,7 +17,19 @@ game = Game()
 # Khởi tạo Clock
 clock = pygame.time.Clock()
 
+# --- CHẠY LOADING ---
+show_loading_screen()
+# --------------------
+
+# Sau khi Loading xong mới khởi tạo Game
+game = Game()
+menu = Menu(game.high_score) 
+is_paused = False 
+
+# --- VÒNG LẶP CHÍNH ---
 while True:
+    menu.high_score_data = game.high_score
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -25,7 +39,7 @@ while True:
         if event.type == SCREEN_UPDATE:
             game.update()
             
-        # 2. Xử lý Input điều khiển rắn 
+        # 2. Xử lý Input điều khiển rắn (Khắc phục lỗi #3 & #4)
         if event.type == pygame.KEYDOWN:
             # Chỉ cập nhật next_direction, ngăn đổi hướng 180 độ
             if game.game_running:
@@ -51,11 +65,5 @@ while True:
     # Cập nhật màn hình
     pygame.display.update()
     
-    # --- SỬA LỖI 2: XÓA giới hạn FPS clock.tick(60) ---
-    # Giữ nguyên tốc độ khung hình (FPS) tối đa của màn hình
-    # và chỉ sử dụng timer SCREEN_UPDATE để điều khiển tốc độ game logic.
-    # clock.tick(60)
-    
-    # NOTE: Nếu muốn ổn định FPS, có thể dùng clock.tick(60) nhưng phải đảm bảo 
-    # tốc độ logic game (150ms) là bội số/ước số của 1/60s. 
-    # Tuy nhiên, để tuân thủ phương án "bỏ tick(55)" của tài liệu, tôi đã xóa clock.tick().
+    # Giới hạn tốc độ khung hình (FPS)
+    clock.tick(55)
