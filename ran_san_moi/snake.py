@@ -2,15 +2,13 @@
 
 import pygame
 from pygame.math import Vector2
-from constants import cell_size, OFFSET, YELLOW, BLACK, HEAD_SIZE, screen, snake_head_surface
+from constants import cell_size, OFFSET, YELLOW, BLACK, HEAD_SIZE, screen, snake_head_surface, number_of_cells
 
 class Snake:
     def __init__(self):
-        # Sửa Bug 3: Đặt vị trí spawn gần trung tâm hơn
+        # Vị trí spawn
         self.body = [Vector2(10, 10), Vector2(9, 10), Vector2(8, 10)]
-        # Hướng đi ban đầu: sang phải
         self.direction = Vector2(1, 0)
-        # Sửa Bug 3 & 4: next_direction để ngăn đổi hướng 180 độ đột ngột
         self.next_direction = Vector2(1, 0) 
         self.new_block = False 
 
@@ -45,7 +43,7 @@ class Snake:
         screen.blit(rotated_head, head_rect)
 
     def rotate_head_image(self):
-        # Sửa lại góc xoay cho đúng chuẩn: Lên=0, Trái=90, Xuống=180, Phải=270
+        # Sửa lại góc xoay
         angle = 0
         if self.direction == Vector2(1, 0):    # Phải
             angle = 270
@@ -59,11 +57,8 @@ class Snake:
         return pygame.transform.rotate(snake_head_surface, angle)
         
     def move_snake(self):
-        # --- KHẮC PHỤC LỖI #4: Cập nhật hướng di chuyển chính bằng hướng chờ ---
-        self.direction = self.next_direction 
-        # ---------------------------------------------------------------------
+        # NOTE: self.direction đã được cập nhật bằng self.next_direction trong game.update() (Sửa Lỗi 1)
         
-        # Xử lý Bug 4: Đảm bảo new_block được xử lý đúng
         if self.new_block:
             body_copy = self.body[:] 
             self.new_block = False
@@ -71,6 +66,24 @@ class Snake:
             body_copy = self.body[:-1]
         
         new_head = body_copy[0] + self.direction
+        
+        # --- SỬA LỖI 4: Xử lý xuyên tường (wrap-around) ngay sau khi tính toán new_head ---
+        # Sẽ không còn giật lag 1 frame vì tọa độ mới đã được tính toán
+        
+        # Xuyên ngang (Trái sang Phải / Phải sang Trái)
+        if new_head.x >= number_of_cells:
+            new_head.x = 0
+        elif new_head.x < 0:
+            new_head.x = number_of_cells - 1
+            
+        # Xuyên dọc (Trên xuống Dưới / Dưới lên Trên)
+        if new_head.y >= number_of_cells:
+            new_head.y = 0
+        elif new_head.y < 0:
+            new_head.y = number_of_cells - 1
+            
+        # -----------------------------------------------------------------------------------
+        
         body_copy.insert(0, new_head)
         
         self.body = body_copy
@@ -85,5 +98,5 @@ class Snake:
         # Đặt lại vị trí ban đầu
         self.body = [Vector2(10, 10), Vector2(9, 10), Vector2(8, 10)]
         self.direction = Vector2(1, 0)
-        self.next_direction = Vector2(1, 0) # Reset next_direction
+        self.next_direction = Vector2(1, 0) 
         self.new_block = False

@@ -2,7 +2,6 @@
 
 from snake import Snake
 from food import Food
-# Import từ constants: BỔ SUNG score_font
 from constants import screen, GREEN, DARK_GREEN, cell_size, number_of_cells, OFFSET, font, score_font
 import pygame
 from pygame.math import Vector2 
@@ -15,14 +14,21 @@ class Game:
         self.score = 0
 
     def update(self):
+        # --- SỬA LỖI 3: Chỉ cập nhật logic game khi game đang chạy ---
         if self.game_running:
-            self.snake.move_snake()
             
-            # --- CHỨC NĂNG XUYÊN TƯỜNG (A ra B) ---
-            self.wrap_around_walls() 
+            # --- SỬA LỖI 1: Cập nhật hướng chính bằng hướng chờ (next_direction) trước move_snake() ---
+            self.snake.direction = self.snake.next_direction 
+            
+            # LỖI 4 (Xuyên tường) ĐÃ CHUYỂN LOGIC SANG snake.py.
+            
+            self.snake.move_snake()
             
             self.check_eat_food()
             self.check_self_collision()
+            
+            # --- LỖI 4: wrap_around_walls() đã được di chuyển vào snake.py
+            # self.wrap_around_walls() 
 
     def draw_elements(self):
         self.draw_grass() 
@@ -55,21 +61,9 @@ class Game:
     def check_wall_collision(self):
         pass
 
-    def wrap_around_walls(self):
-        head = self.snake.body[0]
-        
-        # Xuyên ngang (Trái sang Phải / Phải sang Trái)
-        if head.x >= number_of_cells:
-            head.x = 0
-        elif head.x < 0:
-            head.x = number_of_cells - 1
-            
-        # Xuyên dọc (Trên xuống Dưới / Dưới lên Trên)
-        if head.y >= number_of_cells:
-            head.y = 0
-        elif head.y < 0:
-            head.y = number_of_cells - 1
-
+    # --- LỖI 4: Hàm wrap_around_walls() đã được di chuyển và tích hợp vào Snake.move_snake()
+    # def wrap_around_walls(self):
+    #     ...
         
     def game_over(self):
         self.game_running = False
@@ -81,7 +75,6 @@ class Game:
         self.score = 0
         
     def draw_score(self):
-        # --- ĐÃ SỬA: Dùng score_font (cỡ 60, Times New Roman) ---
         score_text = str(self.score)
         score_surf = score_font.render(score_text, True, DARK_GREEN) 
         
@@ -91,7 +84,6 @@ class Game:
         screen.blit(score_surf, (score_x, score_y))
         
     def draw_game_over(self):
-        # Dùng font (cỡ 40, Times New Roman) cho Game Over
         line1_text = "GAME OVER!"
         line2_text = "NHAN SPACE DE CHOI LAI."
         
