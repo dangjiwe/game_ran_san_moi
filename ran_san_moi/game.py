@@ -34,12 +34,6 @@ class Game:
 
     def update(self):
         if self.game_running:
-            
-            # --- SỬA LỖI 1: Cập nhật hướng chính bằng hướng chờ (next_direction) trước move_snake() ---
-            self.snake.direction = self.snake.next_direction 
-            
-            # LỖI 4 (Xuyên tường) ĐÃ CHUYỂN LOGIC SANG snake.py.
-            
             self.snake.move_snake()
             
             # --- CHỨC NĂNG XUYÊN TƯỜNG (A ra B) ---
@@ -48,9 +42,6 @@ class Game:
             self.check_eat_food()
             self.check_wall_collision()
             self.check_self_collision()
-            
-            # --- LỖI 4: wrap_around_walls() đã được di chuyển vào snake.py
-            # self.wrap_around_walls() 
 
     def draw_elements(self, is_paused):
         """

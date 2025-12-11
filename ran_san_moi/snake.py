@@ -2,7 +2,7 @@
 
 import pygame
 from pygame.math import Vector2
-from constants import cell_size, OFFSET, YELLOW, BLACK, HEAD_SIZE, screen, snake_head_surface, number_of_cells
+from constants import cell_size, OFFSET, YELLOW, BLACK, HEAD_SIZE, screen, snake_head_surface
 
 class Snake:
     def __init__(self):
