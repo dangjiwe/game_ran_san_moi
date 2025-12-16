@@ -2,7 +2,7 @@
 
 import pygame
 from pygame.math import Vector2
-from constants import cell_size, OFFSET, YELLOW, BLACK, HEAD_SIZE, screen, snake_head_surface
+from constants import cell_size, OFFSET, YELLOW, BLUE, BLACK, HEAD_SIZE, screen, snake_head_surface
 
 class Snake:
     def __init__(self):
@@ -18,9 +18,9 @@ class Snake:
                             cell_size, cell_size)
             
             if index % 2 == 0:
-                color = YELLOW
+                color = BLUE
             else:
-                color = BLACK
+                color = BLUE
             
             pygame.draw.rect(screen, color, segment_rect, 0, 7)
 

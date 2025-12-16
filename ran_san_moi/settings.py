@@ -15,9 +15,10 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0) 
 HEAD_COLOR = (255, 60, 60) 
 DARK_GREEN = (43, 51, 24) 
+BLUE = (0, 150, 255)
 
 # --- KÍCH THƯỚC GAME ---
-cell_size = 25       
+cell_size = 25     
 number_of_cells = 20 
 OFFSET = 75          
 

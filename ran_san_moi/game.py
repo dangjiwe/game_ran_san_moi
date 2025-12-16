@@ -117,3 +117,4 @@ class Game:
         self.game_running = True
         self.countdown_active = False
         self.high_score = self.hs_manager.load()
+
