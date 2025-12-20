@@ -1,5 +1,4 @@
 import pygame
-# Import trực tiếp từ constants vì nằm cùng thư mục
 from constants import (
     screen, font, screen_width, screen_height, 
     OFFSET, cell_size, number_of_cells, 
@@ -8,22 +7,38 @@ from constants import (
 
 class GameRenderer:
     def __init__(self):
-        pass
+        # 1. TỐI ƯU FONT: Tải font to cho countdown 1 lần duy nhất ở đây
+        try:
+            # Lấy đường dẫn file font từ đối tượng font gốc (nếu có) hoặc dùng mặc định
+            self.big_font = pygame.font.Font(None, 150) 
+            # Nếu bạn muốn dùng đúng font game, hãy hardcode đường dẫn font ở đây
+            # self.big_font = pygame.font.Font("Resources/font_game.ttf", 150)
+        except:
+            self.big_font = pygame.font.SysFont('Arial', 150)
+
+        # 2. TỐI ƯU VẼ NỀN (Pre-render):
+        # Tạo sẵn một bề mặt chứa hình ảnh bàn cờ để không phải vẽ 400 ô mỗi frame
+        self.pre_rendered_grass = pygame.Surface((cell_size * number_of_cells, cell_size * number_of_cells))
+        self.pre_rendered_grass.fill(GRASS_LIGHT)
+        
+        for row in range(number_of_cells):
+            for col in range(number_of_cells):
+                if (row + col) % 2 != 0: # Chỉ vẽ ô tối màu đè lên nền sáng
+                    x = col * cell_size
+                    y = row * cell_size
+                    rect = pygame.Rect(x, y, cell_size, cell_size)
+                    pygame.draw.rect(self.pre_rendered_grass, GRASS_DARK, rect)
 
     def draw_grass(self):
+        # Vẽ viền ngoài
+        screen.fill(BORDER_COLOR)
+        
+        # Vẽ nội dung bàn cờ
         if bg_surface:
              screen.blit(bg_surface, (0, 0))
         else:
-            screen.fill(BORDER_COLOR)
-            for row in range(number_of_cells):
-                for col in range(number_of_cells):
-                    x = OFFSET + col * cell_size
-                    y = OFFSET + row * cell_size
-                    rect = pygame.Rect(x, y, cell_size, cell_size)
-                    if (row + col) % 2 == 0:
-                        pygame.draw.rect(screen, GRASS_LIGHT, rect)
-                    else:
-                        pygame.draw.rect(screen, GRASS_DARK, rect)
+            # Thay vì vòng lặp for lồng nhau, giờ chỉ cần blit 1 tấm ảnh đã vẽ sẵn
+            screen.blit(self.pre_rendered_grass, (OFFSET, OFFSET))
 
     def draw_button(self, text, x_offset, y_pos):
         text_surf = font.render(text, True, BLACK)
@@ -44,15 +59,12 @@ class GameRenderer:
 
     def draw_countdown(self, value):
         txt = str(value)
-        try: 
-            big_font = pygame.font.Font(font, 150) 
-        except: 
-            big_font = pygame.font.SysFont('Arial', 150)
-            
-        surf = big_font.render(txt, True, (255, 255, 255))
-        outline = big_font.render(txt, True, BLACK)
+        # Sử dụng font đã tải sẵn trong __init__, không tải lại nữa
+        surf = self.big_font.render(txt, True, (255, 255, 255))
+        outline = self.big_font.render(txt, True, BLACK)
+        
         rect = surf.get_rect(center=(screen_width//2, screen_height//2))
-        screen.blit(outline, (rect.x+2, rect.y+2))
+        screen.blit(outline, (rect.x+3, rect.y+3)) # Bóng dày hơn chút (3px)
         screen.blit(surf, rect)
 
     def draw_paused_msg(self):
