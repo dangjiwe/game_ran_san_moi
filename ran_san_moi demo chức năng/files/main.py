@@ -8,9 +8,9 @@ from pygame.math import Vector2
 current_dir = os.path.dirname(os.path.abspath(__file__)) 
 sys.path.append(os.path.join(current_dir, 'Resources')) 
 
-from game import Game
-from menu import Menu 
-from constants import SCREEN_UPDATE, MUSIC_LOADED, screen, font, screen_width, screen_height, GRASS_LIGHT, BLACK, loading_bg_surface
+from Resources.game import Game
+from Resources.menu import Menu 
+from Resources.constants import SCREEN_UPDATE, MUSIC_LOADED, screen, font, screen_width, screen_height, GRASS_LIGHT, BLACK, loading_bg_surface
 
 def show_loading_screen():
     if loading_bg_surface: screen.blit(loading_bg_surface, (0, 0))
