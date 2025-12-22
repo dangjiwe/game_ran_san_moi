@@ -61,16 +61,24 @@ class MenuRenderer:
         # Tiêu đề Game
         title = font.render("RẮN SĂN MỒI", True, BLACK)
         title_shadow = font.render("RẮN SĂN MỒI", True, (200, 200, 200))
+        
+        # Giữ nguyên vị trí tiêu đề ở 1/6 màn hình
         t_rect = title.get_rect(center=(screen_width//2, screen_height//6))
         screen.blit(title_shadow, (t_rect.x+3, t_rect.y+3))
         screen.blit(title, t_rect)
 
         # Vẽ các nút và trả về danh sách rect để logic xử lý chuột
         rects = []
-        start_y = screen_height // 3 + 20
+        
+        # --- THAY ĐỔI Ở ĐÂY ---
+        # Cũ: start_y = screen_height // 3 + 20
+        # Mới: Đổi thành trừ 30 để nâng lên cao hơn khoảng 50 pixel so với cũ
+        start_y = screen_height // 3 - 30  
+        # ----------------------
         
         for i, opt in enumerate(options):
             is_selected = (i == selected_index)
+            # Giữ nguyên khoảng cách giữa các nút là 75
             rect = self.draw_fancy_button(opt, screen_width//2, start_y + i * 75, is_selected)
             rects.append(rect)
             
