@@ -202,28 +202,55 @@ class Menu:
         if self.hover_active: pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
         else: pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+ # files/Resources/menu.py
+
     def draw_settings_screen(self):
-        s = pygame.Surface((screen_width - 80, screen_height - 80)); s.set_alpha(220); s.fill(WHITE)
-        screen.blit(s, (40, 40)); pygame.draw.rect(screen, BLACK, (40, 40, screen_width-80, screen_height-80), 4)
+        # 1. Vẽ nền bảng cài đặt
+        s = pygame.Surface((screen_width - 80, screen_height - 80))
+        s.set_alpha(220); s.fill(WHITE)
+        screen.blit(s, (40, 40))
+        pygame.draw.rect(screen, BLACK, (40, 40, screen_width-80, screen_height-80), 4)
         
+        # 2. Tiêu đề
         title = font.render("CÀI ĐẶT", True, BLACK)
         screen.blit(title, title.get_rect(center=(screen_width//2, 100)))
         vol_label = font.render("ÂM THANH", True, DARK_GREEN)
         screen.blit(vol_label, vol_label.get_rect(center=(screen_width//2, 180)))
 
         center_y = 250
-        self.btn_vol_down = self.create_button("-", screen_width//2 - 100, center_y, width=60, height=60)
-        self.btn_vol_up = self.create_button("+", screen_width//2 + 100, center_y, width=60, height=60)
+        mouse_pos = pygame.mouse.get_pos()
+
+        # 3. Vẽ Nút Giảm (-) : Truyền text rỗng "" để tự vẽ hình
+        self.btn_vol_down = self.create_button("", screen_width//2 - 100, center_y, width=60, height=60)
         
+        # Tự vẽ dấu Trừ (-) đậm
+        color_minus = BLACK if self.btn_vol_down.collidepoint(mouse_pos) else WHITE
+        # Vẽ hình chữ nhật ngang (Dài 20px, Cao 6px)
+        pygame.draw.rect(screen, color_minus, (self.btn_vol_down.centerx - 10, self.btn_vol_down.centery - 3, 20, 6))
+
+        # 4. Vẽ Nút Tăng (+) : Truyền text rỗng ""
+        self.btn_vol_up = self.create_button("", screen_width//2 + 100, center_y, width=60, height=60)
+        
+        # Tự vẽ dấu Cộng (+) đậm
+        color_plus = BLACK if self.btn_vol_up.collidepoint(mouse_pos) else WHITE
+        # Nét ngang
+        pygame.draw.rect(screen, color_plus, (self.btn_vol_up.centerx - 10, self.btn_vol_up.centery - 3, 20, 6))
+        # Nét dọc
+        pygame.draw.rect(screen, color_plus, (self.btn_vol_up.centerx - 3, self.btn_vol_up.centery - 10, 6, 20))
+        
+        # 5. Hiển thị số %
         vol_percent = int(self.volume * 100)
         vol_text = font.render(f"{vol_percent}%", True, BLACK)
-        text_bg = pygame.Rect(0, 0, 100, 60); text_bg.center = (screen_width//2, center_y)
+        text_bg = pygame.Rect(0, 0, 100, 60)
+        text_bg.center = (screen_width//2, center_y)
         pygame.draw.rect(screen, (230, 230, 230), text_bg, border_radius=10)
         pygame.draw.rect(screen, BLACK, text_bg, 2, border_radius=10)
         screen.blit(vol_text, vol_text.get_rect(center=text_bg.center))
 
+        # 6. Nút Quay Lại
         self.back_button_rect = self.create_button("QUAY LẠI", screen_width//2, screen_height - 100, width=200, height=50)
 
+        
     # ... (Các hàm vẽ khác: no_save, challenge, sub_screen, tutorial, mode_selection GIỮ NGUYÊN) ...
     def draw_no_save_msg(self):
         overlay = pygame.Surface((screen_width, screen_height)); overlay.set_alpha(150); overlay.fill(BLACK)
