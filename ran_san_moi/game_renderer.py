@@ -2,7 +2,7 @@ import pygame
 from constants import (
     screen, font, screen_width, screen_height, 
     OFFSET, cell_size, number_of_cells, 
-    BLACK, DARK_GREEN, GRASS_LIGHT, GRASS_DARK, BORDER_COLOR, bg_surface
+    BLACK, DARK_GREEN, GRASS_LIGHT, GRASS_DARK, BORDER_COLOR, WALL_COLOR, WALL_BORDER_COLOR, bg_surface
 )
 
 class GameRenderer:
@@ -39,6 +39,15 @@ class GameRenderer:
         else:
             # Thay vì vòng lặp for lồng nhau, giờ chỉ cần blit 1 tấm ảnh đã vẽ sẵn
             screen.blit(self.pre_rendered_grass, (OFFSET, OFFSET))
+    
+    def draw_wall(sefl, walls):
+        for wall in walls:
+            x = OFFSET + wall.x * cell_size
+            y = OFFSET + wall.y * cell_size
+            rect = pygame.Rect(x, y, cell_size, cell_size)
+
+            pygame.draw.rect(screen, WALL_COLOR, rect)
+            pygame.draw.rect(screen,WALL_BORDER_COLOR, rect, 3)
 
     def draw_button(self, text, x_offset, y_pos):
         text_surf = font.render(text, True, BLACK)

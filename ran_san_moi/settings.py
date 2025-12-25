@@ -16,6 +16,8 @@ BLACK = (0, 0, 0)
 HEAD_COLOR = (255, 60, 60) 
 DARK_GREEN = (43, 51, 24) 
 BLUE = (0, 150, 255)
+WALL_COLOR = (139, 69, 19)
+WALL_BORDER_COLOR = (90, 40 ,10)
 
 # --- KÍCH THƯỚC GAME ---
 cell_size = 25     

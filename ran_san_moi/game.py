@@ -1,4 +1,5 @@
 import pygame
+from maps import MAP_BOX
 from snake import Snake
 from food import Food
 from highscore import HighScoreManager
@@ -10,9 +11,14 @@ from constants import (
 class Game:
     def __init__(self):
         self.snake = Snake()
-        self.food = Food(self.snake.body)
+        self.walls =[]
+        for row_idx, row in enumerate(MAP_BOX):
+            for col_idx, char in enumerate(row):
+                if char == '#':
+                    self.walls.append(pygame.math.Vector2(col_idx, row_idx))
+        self.food = Food(self.snake.body, self.walls)
         self.game_running = True 
-        
+
         self.hs_manager = HighScoreManager()
         self.renderer = GameRenderer()
         
@@ -42,12 +48,12 @@ class Game:
         if self.game_running:
             self.snake.move_snake()
             self.check_eat_food()
-            self.check_wall_collision()
+            self.check_wall_collision() # Xử lý xuyên tường
             self.check_self_collision()
 
     def draw_elements(self, is_paused):
         self.renderer.draw_grass()
-        
+        self.renderer.draw_wall(self.walls)
         if self.game_running or is_paused:
             grid_bottom = OFFSET + (cell_size * number_of_cells)
             btn_y = grid_bottom + 15
@@ -74,7 +80,6 @@ class Game:
             self.renderer.draw_countdown(self.countdown_value)
 
     def check_eat_food(self):
-        # deque vẫn hỗ trợ truy cập index [0] nên dòng này OK
         if self.food.position == self.snake.body[0]:
             self.food.position = self.food.generate_random_pos(self.snake.body)
             self.snake.add_block()
@@ -82,16 +87,29 @@ class Game:
                 eat_sound.play()
 
     def check_wall_collision(self):
+        """
+        Xử lý xuyên tường: Nếu đi quá mép này sẽ xuất hiện ở mép kia.
+        """
         head = self.snake.body[0]
-        if not (0 <= head.x < number_of_cells and 0 <= head.y < number_of_cells):
-            self.game_over()
+        
+        # Xuyên chiều ngang (Trái <-> Phải)
+        if head.x < 0:
+            head.x = number_of_cells - 1
+        elif head.x >= number_of_cells:
+            head.x = 0
+        
+        # Xuyên chiều dọc (Trên <-> Dưới)
+        if head.y < 0:
+            head.y = number_of_cells - 1
+        elif head.y >= number_of_cells:
+            head.y = 0
+        
+        for wall in self.walls:
+            if int(head.x) == int(wall.x) and int(head.y) == int(wall.y):
+                self.game_over()
 
     def check_self_collision(self):
-        # --- ĐÃ SỬA LỖI TẠI ĐÂY ---
-        # Chuyển deque thành list để dùng được tính năng slicing [1:]
         body_list = list(self.snake.body)
-        
-        # Kiểm tra xem đầu rắn (body_list[0]) có nằm trong phần còn lại (body_list[1:]) không
         if body_list[0] in body_list[1:]:
             self.game_over()
 
@@ -104,7 +122,8 @@ class Game:
 
     def reset_game(self):
         self.snake.reset()
-        self.food.position = self.food.generate_random_pos(self.snake.body)
+        #self.food.position = self.food.generate_random_pos(self.snake.body)
+        self.food = Food(self.snake.body, self.walls)
         self.game_running = True
         self.countdown_active = False
         self.high_score = self.hs_manager.load()

@@ -4,7 +4,8 @@ import pygame
 from constants import cell_size, number_of_cells, OFFSET, food_surface, screen
 
 class Food:
-    def __init__(self, snake_body):
+    def __init__(self, snake_body, walls=[]):
+        self.walls = walls
         # Tạo danh sách cố định chứa tọa độ tất cả các ô trên bản đồ
         self.all_cells = set()
         for x in range(number_of_cells):
@@ -20,12 +21,14 @@ class Food:
         screen.blit(food_surface, food_rect)
 
     def generate_random_pos(self, snake_body):
+        occupied_by_snake = set((int(block.x), int(block.y)) for block in snake_body)
+        occupied_by_walls = set((int(w.x), int(w.y)) for w in self.walls)
         # Tạo tập hợp các ô rắn đang nằm đè lên
         # Cần ép kiểu Vector2 về tuple (x, y) vì set không chứa được Vector2
-        occupied_cells = set((int(block.x), int(block.y)) for block in snake_body)
-        
+        #occupied_cells = set((int(block.x), int(block.y)) for block in snake_body)
+        all_occupied = occupied_by_snake.union(occupied_by_walls)
         # Phép toán hiệu của tập hợp: Lấy (Tất cả ô) TRỪ ĐI (Ô rắn đang đứng)
-        free_cells = list(self.all_cells - occupied_cells)
+        free_cells = list(self.all_cells - all_occupied)
         
         if not free_cells:
             # Trường hợp thắng game (kín màn hình), tạm thời trả về vị trí ẩn
