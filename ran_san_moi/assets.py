@@ -1,19 +1,21 @@
-#nằm trong constants.py
+#assets.py nằm trong import của constants.py
 import pygame
 import os
-from settings import (
+from settings import *
+'''(
     BASE_DIR, cell_size, HEAD_SIZE, 
     DARK_GREEN, HEAD_COLOR, screen_width, screen_height
-)
+)'''
 # Cần import display để đảm bảo pygame đã init trước khi load ảnh
 import display 
-
+pygame.mixer.init()
 # --- TẢI ÂM THANH ---
 MUSIC_LOADED = False
 eat_sound = None
+click_sound = None
 
 try:
-    music_path = os.path.join(BASE_DIR, "nhac_nen.wav")
+    music_path = os.path.join(BASE_DIR, "nhac_nen.mp3")
     if os.path.exists(music_path):
         pygame.mixer.music.load(music_path)
         MUSIC_LOADED = True
@@ -23,8 +25,23 @@ try:
         eat_sound = pygame.mixer.Sound(eat_path)
         eat_sound.set_volume(1.0)
 except Exception as e:
-    print(f"Loi am thanh: {e}")
+    print(f"Loi am thanh nhạc nen hoac an: {e}")
 
+# 3. Tiếng bấm nút (click.wav) <--- THÊM ĐOẠN NÀY
+try:
+    click_path = os.path.join(BASE_DIR, "click.wav")
+    # Backup: Nếu không có wav thì tìm mp3
+    if not os.path.exists(click_path):
+        click_path = os.path.join(BASE_DIR, "click.mp3")
+
+    if os.path.exists(click_path):
+        click_sound = pygame.mixer.Sound(click_path)
+        click_sound.set_volume(1.0)
+        print("--> DA TAI THANH CONG CLICK SOUND") # In dòng này để check
+    else:
+        print("--> KHONG TIM THAY FILE CLICK (WAV HOAC MP3)")
+except Exception as e:
+    print(f"Loi tai click sound: {e}")
 # --- TẢI FONT ---
 try:
     font_path = os.path.join(BASE_DIR, "font_game.ttf")

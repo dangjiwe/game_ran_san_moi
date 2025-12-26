@@ -7,11 +7,14 @@ pygame.mixer.init()
 
 from game import Game
 from menu import Menu
-from constants import (
+from constants import *
+'''(
     SCREEN_UPDATE, MUSIC_LOADED, screen, font, 
     screen_width, screen_height, GRASS_LIGHT, loading_bg_surface
-)
-
+)'''
+import sys
+# Ép buộc Python in ra mã UTF-8 để hiển thị được tiếng Việt
+sys.stdout.reconfigure(encoding='utf-8')
 pygame.time.set_timer(SCREEN_UPDATE, 150)
 clock = pygame.time.Clock()
 
