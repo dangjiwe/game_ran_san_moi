@@ -61,6 +61,8 @@ is_paused = False
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            if game.game_running:
+                game.save_current_game()
             pygame.quit()
             sys.exit()
 

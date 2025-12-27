@@ -43,7 +43,7 @@ class MenuRenderer:
                            (rect.left-5, rect.centery)]
              pygame.draw.polygon(screen, BLACK, tri_points)
         
-        # 4. Text (Xử lý trường hợp nút không có chữ như nút volume)
+        # 4. Text
         if text:
             text_surf = font.render(text, True, text_color)
             screen.blit(text_surf, text_surf.get_rect(center=rect.center))
@@ -65,7 +65,6 @@ class MenuRenderer:
         
         for i, opt in enumerate(options):
             is_key_selected = (i == selected_index)
-            # Tính toán rect tạm thời để kiểm tra hover chuột
             temp_rect = pygame.Rect(0, 0, 300, 60)
             temp_rect.center = (screen_width//2, start_y + i * 70)
             is_hovered = temp_rect.collidepoint(mouse_pos)
@@ -76,35 +75,42 @@ class MenuRenderer:
             
         return rects
 
-    def draw_mode_selection(self, mode_index, mode_options, mouse_pos):
+    def draw_map_selection(self, selected_index, map_names, mouse_pos):
         self.draw_background()
-        title = font.render("CHỌN CHẾ ĐỘ", True, BLACK)
-        screen.blit(title, title.get_rect(center=(screen_width//2, screen_height//4)))
+        
+        title = font.render("CHỌN MÀN CHƠI", True, BLACK)
+        screen.blit(title, title.get_rect(center=(screen_width//2, 80)))
         
         rects = []
-        start_y = screen_height // 2
-        for i, opt in enumerate(mode_options):
-            is_key_selected = (i == mode_index)
+        start_y = 150
+        col_1_x = screen_width // 4 + 20
+        col_2_x = screen_width * 3 // 4 - 20
+        
+        for i, name in enumerate(map_names):
+            is_selected = (i == selected_index)
             
-            temp_rect = pygame.Rect(0, 0, 300, 60)
-            temp_rect.center = (screen_width//2, start_y + i * 100)
+            if i % 2 == 0:
+                x = col_1_x; y = start_y + (i // 2) * 80
+            else:
+                x = col_2_x; y = start_y + (i // 2) * 80
+            
+            temp_rect = pygame.Rect(0, 0, 220, 60)
+            temp_rect.center = (x, y)
             is_hovered = temp_rect.collidepoint(mouse_pos)
             
-            rect = self.draw_button(opt, screen_width//2, start_y + i * 100, 
-                                    is_selected=is_key_selected, is_hovered=is_hovered)
+            rect = self.draw_button(name, x, y, width=220, height=60, 
+                                    is_selected=is_selected, is_hovered=is_hovered)
             rects.append(rect)
             
         back_rect = self.draw_button("QUAY LẠI", screen_width//2, screen_height - 60, width=200, height=50)
         return rects, back_rect
 
     def draw_settings(self, volume, mouse_pos):
-        # Vẽ khung nền trắng
         s = pygame.Surface((screen_width - 80, screen_height - 80))
         s.set_alpha(220); s.fill(WHITE)
         screen.blit(s, (40, 40))
         pygame.draw.rect(screen, BLACK, (40, 40, screen_width-80, screen_height-80), 4)
         
-        # Tiêu đề
         title = font.render("CÀI ĐẶT", True, BLACK)
         screen.blit(title, title.get_rect(center=(screen_width//2, 100)))
         vol_label = font.render("ÂM THANH", True, DARK_GREEN)
@@ -123,14 +129,11 @@ class MenuRenderer:
         pygame.draw.rect(screen, col_plus, (btn_up.centerx - 10, btn_up.centery - 3, 20, 6))
         pygame.draw.rect(screen, col_plus, (btn_up.centerx - 3, btn_up.centery - 10, 6, 20))
 
-        # Hiển thị %
         vol_percent = int(volume * 100)
         vol_text = font.render(f"{vol_percent}%", True, BLACK)
         screen.blit(vol_text, vol_text.get_rect(center=(screen_width//2, center_y)))
 
-        # Nút Back
         back_rect = self.draw_button("QUAY LẠI", screen_width//2, screen_height - 100, width=200, height=50)
-        
         return btn_down, btn_up, back_rect
 
     def draw_tutorial(self):
