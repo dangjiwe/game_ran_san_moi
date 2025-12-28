@@ -1,1 +1,0 @@
-{"map": "Kinh \u0111i\u1ec3n", "snake_body": [[10, 9], [10, 8], [10, 7], [10, 6], [10, 5], [10, 4], [10, 3], [10, 2]], "direction": [0, 1], "food_pos": [9, 1], "score": 5, "food_eat_counter": 0, "special_food_pos": null, "skin_id": 0, "game_running_status": true}

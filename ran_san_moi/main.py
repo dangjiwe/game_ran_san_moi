@@ -15,7 +15,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 # --- CẤU HÌNH TỐC ĐỘ ---
 SCREEN_UPDATE = pygame.USEREVENT
-initial_speed = 150 # Tốc độ khởi điểm (ms)
+initial_speed = 250 # Tốc độ khởi điểm (ms)
 current_delay = initial_speed 
 pygame.time.set_timer(SCREEN_UPDATE, current_delay)
 
@@ -82,8 +82,8 @@ while True:
                     
                     # --- LOGIC TĂNG TỐC ĐỘ MƯỢT MÀ ---
                     # Tính toán tốc độ mới dựa trên điểm số (game.score)
-                    # Tốc độ tối đa là 50ms (rất nhanh), khởi điểm 150ms
-                    new_delay = max(50, 150 - (game.score * 2))
+                    # Tốc độ tối đa là 50ms (rất nhanh), khởi điểm 250ms
+                    new_delay = max(50, initial_speed - (game.score * 2))
                     
                     # Chỉ set lại timer khi tốc độ THỰC SỰ thay đổi 
                     # (Tránh gọi set_timer liên tục gây giật bộ đếm)
@@ -120,6 +120,10 @@ while True:
 
                 elif event.key == pygame.K_SPACE and not game.game_running:
                     game.reset_game(); game.start_countdown()
+                    # [THÊM 2 DÒNG NÀY VÀO] 
+                    # Để đưa tốc độ về lại mức chậm ban đầu
+                    current_delay = initial_speed
+                    pygame.time.set_timer(SCREEN_UPDATE, current_delay)
 
     # Vẽ màn hình
     if menu.is_active:

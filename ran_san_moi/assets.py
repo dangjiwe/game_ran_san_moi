@@ -106,7 +106,8 @@ except Exception as e:
 # Load âm thanh Game Over
 try:
     # Đảm bảo đường dẫn đúng: Thư mục Sounds -> file game_over.wav
-    game_over_sound = pygame.mixer.Sound(os.path.join("game_over.wav"))
+    game_over_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "game_over.wav"))
+    #game_over_sound = pygame.mixer.Sound(os.path.join("game_over.wav"))
     game_over_sound.set_volume(0.5) # Chỉnh âm lượng (0.0 đến 1.0)
 except Exception as e:
     print(f"Loi load am thanh game over: {e}")
