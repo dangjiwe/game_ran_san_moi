@@ -10,7 +10,7 @@ from snake import Snake
 from food import Food
 from highscore import HighScoreManager
 from game_renderer import GameRenderer  
-from constants import (cell_size, number_of_cells, OFFSET, eat_sound)
+from constants import (cell_size, number_of_cells, OFFSET, eat_sound, game_over_sound)
 from display import screen
 
 class Game:
@@ -176,6 +176,25 @@ class Game:
 ###################
 #sửa cách tính điểm trong hàm game_over và reset_game
     def game_over(self):
+        # 1. Xử lý âm thanh
+        if self.game_running: # Chỉ chạy logic này 1 lần khi vừa chết
+            
+            # Tạm dừng nhạc nền
+            pygame.mixer.music.pause() 
+            
+            if game_over_sound:
+                game_over_sound.play()
+                
+                # Lấy độ dài file âm thanh (tính bằng giây) -> đổi ra mili giây
+                sound_length_ms = int(game_over_sound.get_length() * 1000)
+                
+                # Đặt hẹn giờ: Sau khi hết tiếng (sound_length_ms), gửi tín hiệu USEREVENT + 1
+                # Số 1 ở cuối nghĩa là chỉ chạy 1 lần (loops=1)
+                pygame.time.set_timer(pygame.USEREVENT + 1, sound_length_ms, 1)
+        """# 1. Phát âm thanh ngay khi chết
+        if self.game_running and game_over_sound: 
+            game_over_sound.play()"""
+            #xử lý lưu điểm
         if os.path.exists(self.save_file):
             try: os.remove(self.save_file)
             except: pass
@@ -188,6 +207,7 @@ class Game:
         if current_score > self.high_score: self.high_score = current_score; self.hs_manager.save(self.high_score)'''
         self.game_running = False 
     def reset_game(self):
+        pygame.mixer.music.unpause()
         self.load_map(self.current_map_name) 
         self.snake.reset(self.current_spawn_pos) 
         self.food = Food(self.snake.body, self.walls)

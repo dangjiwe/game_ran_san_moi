@@ -65,6 +65,12 @@ while True:
                 game.save_current_game()
             pygame.quit()
             sys.exit()
+# [THÊM ĐOẠN NÀY] Bắt sự kiện hẹn giờ để bật lại nhạc
+        if event.type == pygame.USEREVENT + 1:
+            pygame.mixer.music.unpause() # Tiếp tục phát nhạc nền
+
+        if event.type == SCREEN_UPDATE:
+            game.update()
 
         if menu.is_active:
             menu.high_score_data = game.high_score
