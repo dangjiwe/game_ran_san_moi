@@ -27,6 +27,8 @@ class Game:
         self.game_running = True 
 # [THÊM] Biến điểm số riêng, không phụ thuộc độ dài rắn nữa
         self.score = 0
+        # [THÊM] Biến lưu thời điểm mồi đặc biệt xuất hiện để tính 5s
+        self.special_spawn_time = 0
         self.hs_manager = HighScoreManager()
         self.renderer = GameRenderer()
         
@@ -55,6 +57,10 @@ class Game:
         self.current_spawn_pos = SPAWN_POINTS.get(map_name, (7, 4))
 ########################################################################
     def save_current_game(self):
+        #khai báo biến lưu vị trí mồi đặc biệt
+        special_pos_data = None
+        if self.food.special_position:
+            special_pos_data = [int(self.food.special_position.x), int(self.food.special_position.y)]
         # Lưu cả trạng thái game VÀ Skin
         data = {
             "map": self.current_map_name,
@@ -63,6 +69,11 @@ class Game:
             "food_pos": [int(self.food.position.x), int(self.food.position.y)],
             # [SỬA] Lưu biến score thực tế thay vì tính theo độ dài
             "score": self.score,
+            "food_eat_counter": self.food.eat_counter,
+            
+            # Lưu vị trí mồi đặc biệt và thời gian đã trôi qua (để load lại tính tiếp)
+            "special_food_pos": special_pos_data,
+            # Lưu thời gian còn lại (đơn giản hóa thì khi load game cho nó reset 5s cũng được)
             #"score": len(self.snake.body) - 3,
             "skin_id": self.snake.skin_id, # <--- Lưu Skin
             "game_running_status": self.game_running # Lưu trạng thái sống/chết
@@ -99,11 +110,19 @@ class Game:
             
             dir_data = data.get("direction", [1, 0])
             self.snake.direction = Vector2(dir_data[0], dir_data[1])
-            
+            #mồi#######################################################################
             food_data = data.get("food_pos", None)
             if food_data:
                 self.food.position = Vector2(food_data[0], food_data[1])
                 self.food.walls = self.walls 
+            # [THÊM] Load mồi đặc biệt
+            special_data = data.get("special_food_pos", None)
+            if special_data:
+                self.food.special_position = Vector2(special_data[0], special_data[1])
+                # Nếu load lại game mà có mồi đặc biệt, reset thời gian 5s tính từ lúc load
+                self.special_spawn_time = pygame.time.get_ticks()
+            else:
+                self.food.special_position = None
             # [SỬA] Load điểm số
             self.score = data.get("score", 0)
 # [THÊM] Khôi phục trạng thái cục mồi
@@ -129,7 +148,12 @@ class Game:
             return 
         if self.game_running:
             self.snake.move_snake(); self.check_eat_food(); self.check_wall_collision(); self.check_self_collision()
-
+# [THÊM] Kiểm tra thời gian tồn tại của mồi đặc biệt (5 giây = 5000ms)
+            if self.food.special_position:
+                current_time = pygame.time.get_ticks()
+                if current_time - self.special_spawn_time > 5000: # Sau 5 giây
+                    self.food.special_position = None # Biến mất
+                    
 ########################################################################
     def draw_elements(self, screen, is_paused):
         self.renderer.draw_grass(); self.renderer.draw_wall(self.walls)
@@ -153,16 +177,42 @@ class Game:
 
 
     def check_eat_food(self):
-        if int(self.snake.body[0].x) == int(self.food.position.x) and int(self.snake.body[0].y) == int(self.food.position.y):
+        head = self.snake.body[0]
 
-# [SỬA] Kiểm tra loại mồi để cộng điểm
-            if self.food.is_special:
-                self.score += 3  # Mồi xịn cộng 3 điểm
-                # Có thể thêm âm thanh riêng: special_eat_sound.play()
-            else:
-                self.score += 1  # Mồi thường cộng 1 điểm
-            self.food.position = self.food.generate_random_pos(self.snake.body); self.snake.add_block()
+        # --- 1. XỬ LÝ MỒI THƯỜNG (Luôn kiểm tra) ---
+        if int(head.x) == int(self.food.position.x) and int(head.y) == int(self.food.position.y):
+            # A. Xử lý rắn và điểm
+            self.score += 1
+            self.snake.add_block() # Mồi thường -> Rắn DÀI RA
             if eat_sound: eat_sound.play()
+            
+            # B. Xử lý Logic sinh mồi đặc biệt
+            self.food.eat_counter += 1 # Đếm số lần ăn
+            
+            if self.food.eat_counter >= 5:
+                # Đủ 5 lần -> Gọi hàm sinh mồi đặc biệt (đã viết bên food.py)
+                self.food.spawn_special_food(self.snake.body)
+                # Ghi lại thời gian bắt đầu để đếm ngược 5 giây
+                self.special_spawn_time = pygame.time.get_ticks() 
+                # Reset bộ đếm về 0
+                self.food.eat_counter = 0 
+            
+            # C. Sinh lại mồi thường ở vị trí mới
+            self.food.position = self.food.generate_random_pos(self.snake.body)
+
+
+        # --- 2. XỬ LÝ MỒI ĐẶC BIỆT (Chỉ kiểm tra khi nó đang tồn tại) ---
+        if self.food.special_position:
+            if int(head.x) == int(self.food.special_position.x) and int(head.y) == int(self.food.special_position.y):
+                # A. Xử lý điểm
+                self.score += 3 # Mồi xịn cộng 3 điểm
+                if eat_sound: eat_sound.play() # Có thể thay bằng sound khác cho vui
+                
+                # B. QUAN TRỌNG: KHÔNG gọi self.snake.add_block() 
+                # -> Rắn KHÔNG dài ra theo yêu cầu
+                
+                # C. Ăn xong thì xóa mồi đặc biệt đi
+                self.food.special_position = None
 
 
     def check_wall_collision(self):

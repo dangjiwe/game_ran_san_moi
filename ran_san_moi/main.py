@@ -15,7 +15,8 @@ from constants import *
 import sys
 # Ép buộc Python in ra mã UTF-8 để hiển thị được tiếng Việt
 sys.stdout.reconfigure(encoding='utf-8')
-pygame.time.set_timer(SCREEN_UPDATE, 150)
+SCREEN_UPDATE = pygame.USEREVENT
+pygame.time.set_timer(SCREEN_UPDATE, 500)
 clock = pygame.time.Clock()
 
 def show_loading_screen():
@@ -104,7 +105,7 @@ while True:
                     
                     # Công thức: Tốc độ cơ bản 150ms, mỗi 1 điểm giảm 2ms (nhanh hơn). 
                     # Giới hạn nhanh nhất là 40ms (không nhanh quá kẻo không chơi nổi)
-                    new_delay = max(40, 150 - (current_score * 2))
+                    new_delay = max(50, 300 - (current_score * 2))
                     
                     # Cập nhật lại tốc độ game
                     pygame.time.set_timer(SCREEN_UPDATE, new_delay)
