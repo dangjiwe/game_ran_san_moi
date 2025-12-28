@@ -129,7 +129,7 @@ while True:
     if menu.is_active:
         menu.draw_with_game_data(game.snake.skin_id)
     else:
-        game.draw_elements(is_paused)
+        game.draw_elements(screen, is_paused)
         pygame.display.update()
 
     clock.tick(60)

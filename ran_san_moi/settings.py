@@ -1,4 +1,4 @@
-#nằm trong constants.py
+#settings.py nằm trong import của constants.py
 import os
 
 # --- ĐƯỜNG DẪN ---

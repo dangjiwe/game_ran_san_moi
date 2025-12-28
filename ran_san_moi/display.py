@@ -1,4 +1,4 @@
-#nằm trong constants.py
+#display.py nằm trong import của constants.py
 import pygame
 from settings import screen_width, screen_height
 

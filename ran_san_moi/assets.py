@@ -57,6 +57,19 @@ try:
 except:
     food_surface = pygame.Surface((cell_size, cell_size))
     food_surface.fill(DARK_GREEN) 
+
+    # 2. Thức ăn đặc biệt (MỚI THÊM VÀO ĐÂY)
+try:
+    # Bạn hãy lưu một hình ảnh tên là "special_food.png" vào cùng thư mục
+    sp_food_path = os.path.join(BASE_DIR, "special_food.png")
+    special_food_surface = pygame.image.load(sp_food_path)
+    special_food_surface = pygame.transform.scale(special_food_surface, (cell_size, cell_size))
+    print("--> DA TAI THANH CONG SPECIAL FOOD SURFACE") # In dòng này để check
+except:
+    # Nếu không tìm thấy ảnh, tạo một ô vuông màu Vàng (Gold)
+    special_food_surface = pygame.Surface((cell_size, cell_size))
+    special_food_surface.fill((255, 215, 0)) # Màu Vàng Gold
+    print("--> KHONG TIM THAY FILE SPECIAL FOOD, SU DUNG HINH DUNG THAY THE")
     
 try:
     head_path = os.path.join(BASE_DIR, "dauran.png")
@@ -76,7 +89,7 @@ loading_bg_surface = None
 
 try:
     # Menu BG
-    menu_bg_path = os.path.join(BASE_DIR, "menu_bg.jpg")
+    menu_bg_path = os.path.join(BASE_DIR, "menu_bg.png")
     if os.path.exists(menu_bg_path):
         img = pygame.image.load(menu_bg_path)
         menu_bg_surface = pygame.transform.scale(img, (screen_width, screen_height))
