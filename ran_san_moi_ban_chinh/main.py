@@ -15,7 +15,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 # --- CẤU HÌNH TỐC ĐỘ ---
 SCREEN_UPDATE = pygame.USEREVENT
-initial_speed = 200 # Tốc độ khởi điểm (ms)
+initial_speed = 250 # Tốc độ khởi điểm (ms)
 current_delay = initial_speed 
 pygame.time.set_timer(SCREEN_UPDATE, current_delay)
 

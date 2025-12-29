@@ -63,8 +63,8 @@ class MenuRenderer:
         self.draw_background()
 
         # Tiêu đề
-        title = font.render("RẮN SĂN MỒI", True, BLACK)
-        t_shadow = font.render("RẮN SĂN MỒI", True, (200, 200, 200))
+        title = font.render("RẮN SĂN MỒI", True, "#e2ebff")#DARK_GREEN)
+        t_shadow = font.render("RẮN SĂN MỒI", True, BLACK)
         t_rect = title.get_rect(center=(screen_width//2, screen_height//8))
         screen.blit(t_shadow, (t_rect.x+3, t_rect.y+3))
         screen.blit(title, t_rect)
@@ -92,7 +92,7 @@ class MenuRenderer:
 
     def draw_map_selection(self, selected_index, map_names, mouse_pos):
         self.draw_background()
-        title = font.render("CHỌN MÀN CHƠI", True, BLACK)
+        title = font.render("CHỌN MÀN CHƠI", True, "#ffffff")#BLACK)
         screen.blit(title, title.get_rect(center=(screen_width//2, 80)))
         
         rects = []
