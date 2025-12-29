@@ -21,13 +21,29 @@ pygame.time.set_timer(SCREEN_UPDATE, current_delay)
 
 clock = pygame.time.Clock()
 
+def play_bg_music(music_path):
+    """Hàm này giúp chuyển bài hát mượt mà"""
+    if not music_path: return
+    
+    try:
+        # Dừng nhạc cũ
+        pygame.mixer.music.stop()
+        # Load nhạc mới
+        pygame.mixer.music.load(music_path)
+        # Phát lặp lại vô tận
+        pygame.mixer.music.play(-1)
+    except Exception as e:
+        print(f"Lỗi phát nhạc: {e}")
+
 def show_loading_screen():
     start_time = pygame.time.get_ticks()
     loading_duration = 3000
     
-    if MUSIC_LOADED:
-        try: pygame.mixer.music.play(-1)
-        except Exception: pass
+    # [MỚI] Bắt đầu bằng nhạc Menu
+    play_bg_music(MENU_MUSIC_PATH)
+    # Cập nhật volume ban đầu
+    try: pygame.mixer.music.set_volume(1.0)
+    except: pass
 
     while pygame.time.get_ticks() - start_time < loading_duration:
         for event in pygame.event.get():
@@ -61,32 +77,30 @@ while True:
             pygame.quit()
             sys.exit()
 
-        # Bắt sự kiện hẹn giờ tắt nhạc khi Game Over
         if event.type == pygame.USEREVENT + 1:
             pygame.mixer.music.unpause() 
 
         # --- XỬ LÝ MENU ---
         if menu.is_active:
-            # Nếu đang ở menu, KHÔNG gọi game.update() ở đây
             menu.high_score_data = game.high_score
             menu.handle_input(event, game)
+            
+            # [LOGIC CHUYỂN CẢNH] MENU -> GAME
             if not menu.is_active:
                 is_paused = False
                 game.start_countdown()
+                # [MỚI] Chuyển sang nhạc Game
+                play_bg_music(GAME_MUSIC_PATH)
+                # Cập nhật lại volume theo biến volume hiện tại trong menu
+                menu.update_volume()
         
         # --- XỬ LÝ GAMEPLAY ---
         else:
             if event.type == SCREEN_UPDATE:
                 if game.game_running and not is_paused:
-                    game.update() # <--- CHỈ GỌI UPDATE Ở ĐÂY LÀ ĐỦ
+                    game.update() 
                     
-                    # --- LOGIC TĂNG TỐC ĐỘ MƯỢT MÀ ---
-                    # Tính toán tốc độ mới dựa trên điểm số (game.score)
-                    # Tốc độ tối đa là 50ms (rất nhanh), khởi điểm 250ms
                     new_delay = max(50, initial_speed - (game.score * 2))
-                    
-                    # Chỉ set lại timer khi tốc độ THỰC SỰ thay đổi 
-                    # (Tránh gọi set_timer liên tục gây giật bộ đếm)
                     if new_delay != current_delay:
                         current_delay = new_delay
                         pygame.time.set_timer(SCREEN_UPDATE, new_delay)
@@ -94,8 +108,13 @@ while True:
             # Xử lý phím ESC và Chuột
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 if not menu.show_high_score and not menu.show_settings:
+                    # [LOGIC CHUYỂN CẢNH] GAME -> MENU
                     menu.is_active = True
                     is_paused = True
+                    # [MỚI] Chuyển về nhạc Menu
+                    play_bg_music(MENU_MUSIC_PATH)
+                    # Cập nhật lại volume
+                    menu.update_volume()
             
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = event.pos
@@ -103,27 +122,52 @@ while True:
                     is_paused = not is_paused
                     if not is_paused: game.start_countdown()
                 elif game.back_button_rect and game.back_button_rect.collidepoint(mouse_pos):
+                    # [LOGIC CHUYỂN CẢNH] GAME -> MENU (Bằng chuột)
                     menu.is_active = True; is_paused = True
+                    # [MỚI] Chuyển về nhạc Menu
+                    play_bg_music(MENU_MUSIC_PATH)
+                    menu.update_volume()
 
             # Xử lý điều khiển rắn
             if event.type == pygame.KEYDOWN and not is_paused:
                 if game.game_running and not game.countdown_active:
                    if game.snake.can_move:
-                        if event.key == pygame.K_UP and game.snake.direction.y != 1:
-                            game.snake.direction = Vector2(0, -1); game.snake.can_move = False
-                        elif event.key == pygame.K_DOWN and game.snake.direction.y != -1:
-                            game.snake.direction = Vector2(0, 1); game.snake.can_move = False
-                        elif event.key == pygame.K_LEFT and game.snake.direction.x != 1:
-                            game.snake.direction = Vector2(-1, 0); game.snake.can_move = False
-                        elif event.key == pygame.K_RIGHT and game.snake.direction.x != -1:
-                            game.snake.direction = Vector2(1, 0); game.snake.can_move = False
+                        # Lên: Mũi tên Lên HOẶC phím W
+                        if (event.key == pygame.K_UP or event.key == pygame.K_w) and game.snake.direction.y != 1:
+                            game.snake.direction = Vector2(0, -1)
+                            game.snake.can_move = False
+                        
+                        # Xuống: Mũi tên Xuống HOẶC phím S
+                        elif (event.key == pygame.K_DOWN or event.key == pygame.K_s) and game.snake.direction.y != -1:
+                            game.snake.direction = Vector2(0, 1)
+                            game.snake.can_move = False
+                        
+                        # Trái: Mũi tên Trái HOẶC phím A
+                        elif (event.key == pygame.K_LEFT or event.key == pygame.K_a) and game.snake.direction.x != 1:
+                            game.snake.direction = Vector2(-1, 0)
+                            game.snake.can_move = False
+                        
+                        # Phải: Mũi tên Phải HOẶC phím D
+                        elif (event.key == pygame.K_RIGHT or event.key == pygame.K_d) and game.snake.direction.x != -1:
+                            game.snake.direction = Vector2(1, 0)
+                            game.snake.can_move = False
 
                 elif event.key == pygame.K_SPACE and not game.game_running:
                     game.reset_game(); game.start_countdown()
-                    # [THÊM 2 DÒNG NÀY VÀO] 
-                    # Để đưa tốc độ về lại mức chậm ban đầu
                     current_delay = initial_speed
                     pygame.time.set_timer(SCREEN_UPDATE, current_delay)
+
+                elif event.key == pygame.K_SPACE and not game.game_running:
+                    game.reset_game(); game.start_countdown()
+                    current_delay = initial_speed
+                    pygame.time.set_timer(SCREEN_UPDATE, current_delay)
+                    
+                    # [MỚI] Khi chơi lại (Reset), đảm bảo nhạc Game đang chạy
+                    # (Phòng trường hợp nhạc Game Over làm ngắt quãng)
+                    if not pygame.mixer.music.get_busy():
+                        play_bg_music(GAME_MUSIC_PATH)
+                        menu.update_volume()
+
 
     # Vẽ màn hình
     if menu.is_active:

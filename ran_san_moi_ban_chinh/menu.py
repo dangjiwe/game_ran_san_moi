@@ -39,10 +39,25 @@ class Menu:
         if constants.click_sound: constants.click_sound.play()
 
     def update_volume(self):
+        # 1. Nhạc nền
         try: pygame.mixer.music.set_volume(self.volume)
         except: pass
-        if constants.eat_sound: constants.eat_sound.set_volume(self.volume)
-        if constants.click_sound: constants.click_sound.set_volume(self.volume)
+        
+        # 2. Âm thanh thường (Ăn mồi, Click): Theo 100% volume tổng
+        if constants.eat_sound: 
+            constants.eat_sound.set_volume(self.volume)
+        if constants.click_sound: 
+            constants.click_sound.set_volume(self.volume)
+            
+        # 3. Mồi đặc biệt: Ưu tiên to nhất (100% volume tổng)
+        if constants.eat_special_sound:
+            constants.eat_special_sound.set_volume(self.volume)
+            
+        # 4. Đếm ngược: Luôn nhỏ bằng 30% volume tổng (Để không bị chói tai)
+        if constants.countdown_sound:
+            # Ví dụ: Nếu tổng là 1.0 -> countdown là 0.3
+            # Nếu tổng là 0.5 -> countdown là 0.15
+            constants.countdown_sound.set_volume(self.volume * 0.3)
 
     def handle_input(self, event, game_object):
         if self.show_no_save_popup:

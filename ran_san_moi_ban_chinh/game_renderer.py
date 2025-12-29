@@ -59,11 +59,29 @@ class GameRenderer:
         screen.blit(text_surf, text_surf.get_rect(center=rect.center))
         return rect
 
-    def draw_score(self, current_score, high_score):
+    def draw_score(self, current_score, high_score, is_new_record=False):
+        # 1. Vẽ điểm hiện tại (Bên phải) - Giữ nguyên
         s_surf = font.render(f"ĐIỂM: {current_score}", True, DARK_GREEN)
         screen.blit(s_surf, (screen_width - OFFSET - s_surf.get_width(), OFFSET - 50))
         
-        h_surf = font.render(f"ĐIỂM CAO NHẤT: {high_score}", True, DARK_GREEN)
+        # 2. Vẽ Điểm cao / Kỷ lục mới (Bên trái) - Logic mới
+        if not is_new_record:
+            # Trạng thái bình thường
+            txt_str = f"ĐIỂM CAO NHẤT: {high_score}"
+            color = DARK_GREEN
+        else:
+            # Trạng thái phá kỷ lục: Đổi chữ và nhấp nháy màu
+            txt_str = f"KỶ LỤC MỚI: {high_score}"
+            
+            # Hiệu ứng nhấp nháy nhanh (200ms đổi màu 1 lần)
+            import pygame
+            current_time = pygame.time.get_ticks()
+            if (current_time // 200) % 2 == 0:
+                color = (255, 0, 0)     # Màu Đỏ
+            else:
+                color = (255, 215, 0)   # Màu Vàng Gold
+
+        h_surf = font.render(txt_str, True, color)
         screen.blit(h_surf, (OFFSET, OFFSET - 50))
 
     def draw_countdown(self, value):
@@ -81,9 +99,26 @@ class GameRenderer:
         grid_center = (OFFSET + (cell_size * number_of_cells)//2)
         screen.blit(surf, surf.get_rect(center=(grid_center, grid_center)))
 
-    def draw_game_over(self):
-        l1 = font.render("GAME OVER!", True, (255, 0, 0))
+    # [CẬP NHẬT] Giữ nguyên style cũ + Thêm hiển thị điểm
+    def draw_game_over(self, score):
+        # Tạo font to hơn chút cho chữ Game Over (nếu có thể)
+        try:
+             # Cố gắng load font từ file resources nếu có để đồng bộ
+             font_big = pygame.font.Font("Resources/font_game.ttf", 60)
+        except:
+             # Nếu không thì dùng font hệ thống to và đậm
+             font_big = pygame.font.SysFont('Arial', 60, bold=True)
+
+        l1 = font_big.render("GAME OVER!", True, (255, 0, 0))
+        
+        # [MỚI] Dòng hiển thị điểm số
+        l_score = font.render(f"ĐIỂM CỦA BẠN: {score}", True, (0, 0, 255)) # Màu xanh dương
+        
         l2 = font.render("Nhấn SPACE để chơi lại.", True, DARK_GREEN)
+        
         cy = screen_height // 2
-        screen.blit(l1, l1.get_rect(center=(screen_width//2, cy - 30)))
-        screen.blit(l2, l2.get_rect(center=(screen_width//2, cy + 30)))
+        
+        # Vẽ 3 dòng chữ canh giữa
+        screen.blit(l1, l1.get_rect(center=(screen_width//2, cy - 60)))
+        screen.blit(l_score, l_score.get_rect(center=(screen_width//2, cy)))
+        screen.blit(l2, l2.get_rect(center=(screen_width//2, cy + 60)))
