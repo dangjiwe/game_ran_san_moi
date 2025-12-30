@@ -26,7 +26,7 @@ Một phiên bản hiện đại của trò chơi cổ điển, tập trung vào
 | **W / A / S / D** | Di chuyển Rắn |
 | **⬆️ ⬇️ ⬅️ ➡️** | Di chuyển Rắn (Cách 2) |
 | **Space / Enter** | Chọn / Chơi lại |
-| **ESC** | Tạm dừng / Quay lại / Cài đặt |
+| **ESC** |Quay lại|
 
 ---
 
@@ -34,7 +34,7 @@ Một phiên bản hiện đại của trò chơi cổ điển, tập trung vào
 
 ```text
 GAME_RAN_SAN_MOI/
-├── ran_san_moi_ban_chinh/
+├── ran_san_moi/
 │   ├── Resources/         # Tài nguyên Âm thanh, Hình ảnh, Font
 │   ├── main.py            # Điểm khởi chạy game
 │   ├── game.py            # Xử lý logic chính
