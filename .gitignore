@@ -1,3 +1,16 @@
+# --- Bỏ qua file dữ liệu game ---
+high_score.json
+saved_game.json
+
+# --- Bỏ qua các file rác của Python ---
+__pycache__/
+*.pyc
+
+# --- Bỏ qua file cấu hình môi trường ảo ---
+venv/
+env/
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
