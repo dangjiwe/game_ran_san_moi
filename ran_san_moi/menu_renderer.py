@@ -234,7 +234,7 @@ class MenuRenderer:
     # --- ĐÃ SỬA LẠI HÀM NÀY ĐỂ NÚT TO HƠN ---
     def draw_skin_shop(self, current_skin_id, mouse_pos):
         self.draw_background()
-        title = font.render("CỬA HÀNG SKIN", True, BLACK)
+        title = font.render("CỬA HÀNG SKIN", True, WHITE)
         screen.blit(title, title.get_rect(center=(screen_width//2, 80)))
 
         rects = []
