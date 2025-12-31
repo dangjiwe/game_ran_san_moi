@@ -104,6 +104,23 @@ try:
 except Exception as e:
     print(f"Lỗi tải ảnh nền: {e}")
 
+def stop_all_sfx():
+    """Hàm này dùng để tắt ngay lập tức các hiệu ứng âm thanh dài"""
+    try:
+        if countdown_sound: 
+            countdown_sound.stop()
+        if game_over_sound: 
+            game_over_sound.stop()
+        if highscore_sound: 
+            highscore_sound.stop()
+        if eat_sound:
+            eat_sound.stop()
+        if eat_special_sound:
+            eat_special_sound.stop()
+        
+    except Exception as e:
+        print(f"Lỗi khi dừng âm thanh: {e}")
+
 # Ảnh thức ăn cũ (để giữ tương thích code, dù không dùng)
 food_surface = None
 special_food_surface = None

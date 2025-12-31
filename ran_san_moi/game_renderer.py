@@ -116,9 +116,12 @@ class GameRenderer:
         l1 = font_big.render("GAME OVER!", True, (255, 0, 0))
         l_score = font.render(f"ĐIỂM CỦA BẠN: {score}", True, (0, 0, 255)) 
         l2 = font.render("Nhấn SPACE để chơi lại.", True, DARK_GREEN)
+        l3 = font.render("Nhấn ESC để về Menu", True, (0, 0, 0))
         
         cy = screen_height // 2
         
-        screen.blit(l1, l1.get_rect(center=(screen_width//2, cy - 60)))
-        screen.blit(l_score, l_score.get_rect(center=(screen_width//2, cy)))
-        screen.blit(l2, l2.get_rect(center=(screen_width//2, cy + 60)))
+        screen.blit(l1, l1.get_rect(center=(screen_width//2, cy - 120))) 
+        screen.blit(l_score, l_score.get_rect(center=(screen_width//2, cy - 40)))
+        
+        screen.blit(l2, l2.get_rect(center=(screen_width//2, cy + 50)))  
+        screen.blit(l3, l3.get_rect(center=(screen_width//2, cy + 120))) 

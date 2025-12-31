@@ -82,7 +82,7 @@ while True:
 
         # --- XỬ LÝ MENU ---
         if menu.is_active:
-            menu.high_score_data = game.high_score
+            menu.high_score_data = game.all_high_scores
             menu.handle_input(event, game)
             
             # [LOGIC CHUYỂN CẢNH] MENU -> GAME
@@ -109,6 +109,7 @@ while True:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 if not menu.show_high_score and not menu.show_settings:
                     # [LOGIC CHUYỂN CẢNH] GAME -> MENU
+                    stop_all_sfx()
                     menu.is_active = True
                     is_paused = True
                     # [MỚI] Chuyển về nhạc Menu
@@ -123,6 +124,7 @@ while True:
                     if not is_paused: game.start_countdown()
                 elif game.back_button_rect and game.back_button_rect.collidepoint(mouse_pos):
                     # [LOGIC CHUYỂN CẢNH] GAME -> MENU (Bằng chuột)
+                    stop_all_sfx()
                     menu.is_active = True; is_paused = True
                     # [MỚI] Chuyển về nhạc Menu
                     play_bg_music(MENU_MUSIC_PATH)
